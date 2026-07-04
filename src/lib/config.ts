@@ -1,5 +1,6 @@
-export const WALLET_URL = import.meta.env.VITE_WALLET_URL ?? "https://wallet.benzo.space";
-export const CONSOLE_URL = import.meta.env.VITE_CONSOLE_URL ?? "https://console.benzo.space";
+// The apps aren't public yet — the doors lead to the under-construction page.
+export const WALLET_URL = import.meta.env.VITE_WALLET_URL ?? "/construction?door=wallet";
+export const CONSOLE_URL = import.meta.env.VITE_CONSOLE_URL ?? "/construction?door=console";
 
 export const SOCIALS = {
   x: "https://x.com/MansiVe61115132",

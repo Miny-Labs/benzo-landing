@@ -7,6 +7,7 @@ import GalleryPanel from "./components/GalleryPanel";
 import CustomCursor from "./components/CustomCursor";
 import TransitionWave from "./components/TransitionWave";
 import SiteFooter from "./components/SiteFooter";
+import StepHoverImages from "./components/StepHoverImages";
 import { BalanceInfo, BrandMark, HeaderNav, OutroCtas, RotatingHeadline, ScrollHint } from "./components/overlays";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
@@ -187,6 +188,7 @@ export default function App() {
         <h1 className="sr-only">Benzo: private USDC payments on Stellar</h1>
         <VideoStage ref={stageRef} />
         <GalleryPanel ref={panelRef} wrapRef={wrapRef} />
+        <StepHoverImages />
         <SiteFooter ref={footerRef} />
         <BrandMark />
         <HeaderNav />

@@ -484,6 +484,22 @@ body {
   }
 }
 
+/* cursor-following reveals for the step rows */
+.swipeimage {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 290px;
+  height: 386px;
+  object-fit: cover;
+  border-radius: 12px;
+  z-index: 15;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  box-shadow: 0 34px 90px oklch(0.1 0.02 262 / 0.55);
+}
+
 /* ————— the doors (hero, under the cover line) ————— */
 .ctas {
   position: fixed;
