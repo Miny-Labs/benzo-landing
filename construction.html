@@ -88,13 +88,6 @@
         padding: 0 22px calc(46px + env(safe-area-inset-bottom));
         gap: 14px;
       }
-      .kicker {
-        font-size: 11.5px;
-        letter-spacing: 0.24em;
-        text-transform: uppercase;
-        font-weight: 700;
-        color: var(--periwinkle);
-      }
       h1 {
         margin: 0;
         font-size: clamp(40px, 6vw, 84px);
@@ -102,14 +95,6 @@
         letter-spacing: -0.03em;
         line-height: 1;
         font-synthesis: none;
-      }
-      .sub {
-        margin: 2px 0 0;
-        max-width: 44ch;
-        font-size: 15.5px;
-        line-height: 1.6;
-        font-weight: 500;
-        color: var(--dim);
       }
       .back {
         margin-top: 16px;
@@ -136,23 +121,6 @@
       .back:hover .arrow {
         transform: translateX(-4px);
       }
-      .status {
-        margin-top: 8px;
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        font-size: 11px;
-        letter-spacing: 0.18em;
-        text-transform: uppercase;
-        font-weight: 600;
-        color: rgba(242, 240, 233, 0.45);
-      }
-      .status .dot {
-        width: 5px;
-        height: 5px;
-        border-radius: 999px;
-        background: #63c78f;
-      }
       @media (prefers-reduced-motion: reduce) {
         .back,
         .back .arrow {
@@ -175,21 +143,11 @@
     </a>
 
     <main>
-      <p class="kicker" id="kicker">Benzo</p>
       <h1>Under construction.</h1>
-      <p class="sub">
-        This door isn't open yet. We're taking our time with it, since everything behind it stays
-        private.
-      </p>
       <a class="back" href="/"><span class="arrow" aria-hidden="true">←</span> Back to the field</a>
-      <p class="status"><span class="dot"></span> Live on Stellar testnet</p>
     </main>
 
     <script>
-      var door = new URLSearchParams(location.search).get("door");
-      var kicker = document.getElementById("kicker");
-      if (door === "wallet") kicker.textContent = "Personal wallet";
-      if (door === "console") kicker.textContent = "Business console";
       if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
         var v = document.querySelector("video");
         v.removeAttribute("autoplay");
