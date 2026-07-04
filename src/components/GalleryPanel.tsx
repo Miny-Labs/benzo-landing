@@ -82,11 +82,11 @@ const GalleryPanel = forwardRef<HTMLDivElement, Props>(function GalleryPanel({ w
               <div key={i} className="vault-cell">
                 <div className="bp-card" style={{ transformOrigin: origin }}>
                   <img src={img.src} alt={img.alt} loading="lazy" draggable={false} />
-                  <span className="tag">
-                    <span className="tag-num">{String(idx + 1).padStart(2, "0")}</span>
-                    {img.caption}
-                  </span>
                 </div>
+                <span className={`cell-tag ${col < cols / 2 ? "side-right" : "side-left"}`}>
+                  <span className="tag-num">{String(idx + 1).padStart(2, "0")}</span>
+                  {img.caption}
+                </span>
               </div>
             );
           })}

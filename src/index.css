@@ -149,10 +149,13 @@ body {
 .headline .line-clip {
   overflow: hidden;
   padding-block: 0.08em;
+  /* always reserve two display lines so the sub and doors never shift */
+  font-size: clamp(44px, 5.4vw, 96px);
+  height: 2.2em;
 }
 .headline .line {
   display: block;
-  font-size: clamp(44px, 5.4vw, 96px);
+  font-size: inherit;
   line-height: 1.02;
   letter-spacing: -0.03em;
 }
@@ -169,7 +172,7 @@ body {
     top: 140px;
     width: calc(100vw - 40px);
   }
-  .headline .line {
+  .headline .line-clip {
     font-size: clamp(36px, 7vw, 64px);
   }
 }
@@ -179,11 +182,11 @@ body {
     left: 16px;
     width: calc(100vw - 32px);
   }
-  .headline .line {
+  .headline .line-clip {
     font-size: clamp(30px, 9vw, 44px);
   }
   .headline .sub {
-    font-size: 12px;
+    font-size: 12.5px;
   }
 }
 
@@ -366,6 +369,7 @@ body {
 }
 .vault-cell {
   aspect-ratio: 2 / 3;
+  position: relative;
 }
 .bp-card {
   position: relative;
@@ -382,23 +386,51 @@ body {
   object-fit: cover;
   display: block;
 }
-.bp-card .tag {
+/* captions live beside the card, on its empty side, and fade with its scale */
+.cell-tag {
   position: absolute;
-  left: 14px;
-  bottom: 12px;
+  bottom: 6px;
   display: inline-flex;
   align-items: baseline;
-  gap: 8px;
-  font-size: 11px;
-  letter-spacing: 0.15em;
+  gap: 10px;
+  font-size: 13.5px;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
   font-weight: 700;
-  color: var(--ink);
-  opacity: 0.82;
+  color: var(--panel-soft);
+  white-space: nowrap;
+  opacity: 0;
+  will-change: opacity;
+  pointer-events: none;
 }
-.bp-card .tag-num {
-  font-size: 9px;
-  opacity: 0.6;
+.cell-tag .tag-num {
+  font-size: 10px;
+  opacity: 0.55;
+}
+.cell-tag.side-right {
+  left: calc(100% + 22px);
+}
+/* left-side captions align to the card top so two captions sharing the same
+   empty column never sit on one line */
+.cell-tag.side-left {
+  right: calc(100% + 22px);
+  bottom: auto;
+  top: 8px;
+}
+@media (max-width: 639px) {
+  .vault-grid {
+    row-gap: 40px;
+  }
+  .cell-tag {
+    font-size: 11px;
+    bottom: auto;
+    top: calc(100% + 10px);
+  }
+  .cell-tag.side-right,
+  .cell-tag.side-left {
+    left: 2px;
+    right: auto;
+  }
 }
 
 /* how it works — after the gallery */
@@ -452,23 +484,24 @@ body {
   }
 }
 
-/* ————— the doors (inside the footer) ————— */
+/* ————— the doors (hero, under the cover line) ————— */
 .ctas {
-  position: relative;
-  margin-top: clamp(22px, 3vh, 40px);
-  max-width: 380px;
+  position: fixed;
+  left: 32px;
+  top: calc(clamp(150px, 21vh, 240px) + clamp(97px, 11.9vw, 212px) + 158px);
+  z-index: 25;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   gap: 12px;
 }
 .pill {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  gap: 18px;
   text-decoration: none;
   border-radius: 999px;
-  padding: 22px 30px;
+  padding: 15px 26px;
   transition:
     box-shadow 0.25s ease,
     background-color 0.25s ease;
@@ -486,7 +519,7 @@ body {
   opacity: 0.75;
 }
 .pill .big {
-  font-size: 24px;
+  font-size: 20px;
   line-height: 1;
   letter-spacing: -0.02em;
 }
@@ -539,22 +572,32 @@ body {
   pointer-events: none;
 }
 .pill.secondary {
-  color: var(--cream);
-  border: 1.5px solid oklch(0.965 0.007 106 / 0.5);
-  background: transparent;
+  color: var(--ink);
+  border: 1.5px solid oklch(0.29 0.028 252 / 0.5);
+  background: oklch(0.955 0.006 106 / 0.35);
 }
 .pill.secondary:hover {
-  background: oklch(0.965 0.007 106 / 0.07);
+  background: oklch(0.955 0.006 106 / 0.6);
 }
 @media (max-width: 1023px) {
   .ctas {
-    max-width: none;
+    left: 20px;
+    top: calc(140px + clamp(79px, 15.4vw, 141px) + 148px);
   }
   .pill {
-    padding: 18px 26px;
+    padding: 13px 22px;
   }
   .pill .big {
-    font-size: 21px;
+    font-size: 18px;
+  }
+}
+@media (max-width: 639px) {
+  .ctas {
+    left: 16px;
+    right: 16px;
+    top: calc(104px + clamp(66px, 19.8vw, 97px) + 128px);
+    flex-direction: column;
+    gap: 10px;
   }
 }
 
@@ -674,10 +717,6 @@ body {
   min-width: 0;
   color: var(--cream);
 }
-.site-footer .ctas {
-  flex: 0 0 clamp(280px, 24vw, 360px);
-  margin: 0 0 10px;
-}
 .site-footer__mark {
   position: relative;
   flex: 0 0 clamp(54px, 5.6vw, 104px);
@@ -742,15 +781,6 @@ body {
   }
   .site-footer__top .site-footer__lead {
     grid-column: 1 / -1;
-  }
-  .site-footer__brand-row {
-    flex-direction: column-reverse;
-    align-items: stretch;
-    gap: 20px;
-  }
-  .site-footer .ctas {
-    flex: none;
-    margin: 0;
   }
 }
 @media (max-width: 560px) {

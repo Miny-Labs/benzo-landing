@@ -7,7 +7,7 @@ import GalleryPanel from "./components/GalleryPanel";
 import CustomCursor from "./components/CustomCursor";
 import TransitionWave from "./components/TransitionWave";
 import SiteFooter from "./components/SiteFooter";
-import { BalanceInfo, BrandMark, HeaderNav, RotatingHeadline, ScrollHint } from "./components/overlays";
+import { BalanceInfo, BrandMark, HeaderNav, OutroCtas, RotatingHeadline, ScrollHint } from "./components/overlays";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 // Mobile URL-bar collapse fires resize; don't let it rebuild the scrub.
@@ -46,9 +46,11 @@ export default function App() {
       const nav = document.getElementById("site-nav");
       const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+      const heroCtas = document.getElementById("hero-ctas");
+
       let vh = window.innerHeight;
       let maxScroll = 0;
-      let cards: { el: HTMLElement; top: number; h: number }[] = [];
+      let cards: { el: HTMLElement; top: number; h: number; tag: HTMLElement | null }[] = [];
 
       const topWithin = (el: HTMLElement, root: HTMLElement) => {
         let t = 0;
@@ -68,6 +70,7 @@ export default function App() {
           el,
           top: topWithin(el, wrap),
           h: el.offsetHeight,
+          tag: el.parentElement?.querySelector<HTMLElement>(".cell-tag") ?? null,
         }));
         ScrollTrigger.refresh();
       };
@@ -120,6 +123,7 @@ export default function App() {
           else if (bottom <= 0 || top >= vh) s = 0;
           else s = Math.max(0, Math.min(1, Math.min((vh - top) / (vh * 0.6), bottom / (vh * 0.4))));
           c.el.style.transform = `scale(${s})`;
+          if (c.tag) c.tag.style.opacity = String(s);
         }
 
         // Outro: the footer slides up over the vault.
@@ -130,22 +134,25 @@ export default function App() {
         footer.style.pointerEvents = interactive ? "auto" : "none";
         footer.toggleAttribute("inert", !interactive);
 
-        // The whole hero chrome (header, cover line, balance) bows out once
-        // the vault takes over; the footer carries the brand from there.
-        const fadeOut = Math.max(0, Math.min(1, (y - vh * 0.55) / (vh * 0.4)));
+        // The whole hero chrome (header, cover line, balance, doors) bows out
+        // quickly once the vault starts rising; the footer carries the brand.
+        const fadeOut = Math.max(0, Math.min(1, (y - vh * 0.12) / (vh * 0.33)));
         if (y > 0) {
           const chrome = String(1 - fadeOut);
           if (headline) headline.style.opacity = chrome;
           if (brand) brand.style.opacity = chrome;
           if (nav) nav.style.opacity = chrome;
+          if (heroCtas) heroCtas.style.opacity = chrome;
           info.style.opacity = chrome;
           const gone = fadeOut > 0.5;
           nav?.toggleAttribute("inert", gone);
+          heroCtas?.toggleAttribute("inert", gone);
           info.toggleAttribute("inert", gone);
         } else if (lastY > 0) {
           // Instant jump back to top (Home key, scrollTo): restore defaults once.
-          for (const el of [headline, brand, nav, info, hint]) if (el) el.style.opacity = "";
+          for (const el of [headline, brand, nav, info, hint, heroCtas]) if (el) el.style.opacity = "";
           nav?.removeAttribute("inert");
+          heroCtas?.removeAttribute("inert");
           info.removeAttribute("inert");
         }
 
@@ -184,6 +191,7 @@ export default function App() {
         <BrandMark />
         <HeaderNav />
         <RotatingHeadline />
+        <OutroCtas />
         <BalanceInfo ref={infoRef} symbolRef={symbolRef} />
         <ScrollHint />
       </main>

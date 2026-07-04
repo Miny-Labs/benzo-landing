@@ -1,5 +1,4 @@
 import { forwardRef } from "react";
-import { OutroCtas } from "./overlays";
 import { CONSOLE_URL, EXPLORER_URL, GLYPH_PATH, SOCIALS, WALLET_URL } from "../lib/config";
 
 /**
@@ -50,7 +49,6 @@ const SiteFooter = forwardRef<HTMLDivElement>(function SiteFooter(_p, ref) {
             </span>
             <span className="site-footer__word display">Benzo</span>
           </a>
-          <OutroCtas />
         </div>
 
         <div className="site-footer__legal">

@@ -291,7 +291,7 @@ export function OutroCtas() {
   }, []);
 
   return (
-    <div ref={rootRef} className="ctas">
+    <div ref={rootRef} id="hero-ctas" className="ctas">
       <a className="pill primary" href={WALLET_URL}>
         <span className="stack">
           <span className="kicker">Personal</span>
