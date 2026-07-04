@@ -1,0 +1,194 @@
+import { useRef } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useGSAP } from "@gsap/react";
+import VideoStage from "./components/VideoStage";
+import GalleryPanel from "./components/GalleryPanel";
+import CustomCursor from "./components/CustomCursor";
+import TransitionWave from "./components/TransitionWave";
+import SiteFooter from "./components/SiteFooter";
+import { BalanceInfo, BrandMark, HeaderNav, RotatingHeadline, ScrollHint } from "./components/overlays";
+
+gsap.registerPlugin(ScrollTrigger, useGSAP);
+// Mobile URL-bar collapse fires resize; don't let it rebuild the scrub.
+ScrollTrigger.config({ ignoreMobileResize: true });
+
+const SYMBOLS = ["●", "✱", "§", "%", "#"];
+
+/**
+ * Scroll choreography (all layers fixed; the spacer defines scroll length):
+ *   Phase 1 (0 → vh)          the vault panel slides up over the sky.
+ *   Phase 2 (vh → vh+max)     the vault's inner wrap scrolls; captioned cards
+ *                             scale in/out per frame; the header bows out.
+ *   Outro  (last 1vh)         the ink footer slides up — nav, the two doors,
+ *                             and the oversized wordmark.
+ */
+export default function App() {
+  const spacerRef = useRef<HTMLDivElement>(null);
+  const stageRef = useRef<HTMLDivElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const infoRef = useRef<HTMLDivElement>(null);
+  const footerRef = useRef<HTMLDivElement>(null);
+  const symbolRef = useRef<HTMLSpanElement>(null);
+
+  useGSAP(
+    () => {
+      const spacer = spacerRef.current!;
+      const stage = stageRef.current!;
+      const panel = panelRef.current!;
+      const wrap = wrapRef.current!;
+      const info = infoRef.current!;
+      const footer = footerRef.current!;
+      const hint = document.getElementById("scroll-hint");
+      const headline = document.getElementById("rot-headline");
+      const brand = document.getElementById("brand-mark");
+      const nav = document.getElementById("site-nav");
+      const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      let vh = window.innerHeight;
+      let maxScroll = 0;
+      let cards: { el: HTMLElement; top: number; h: number }[] = [];
+
+      const topWithin = (el: HTMLElement, root: HTMLElement) => {
+        let t = 0;
+        let n: HTMLElement | null = el;
+        while (n && n !== root) {
+          t += n.offsetTop;
+          n = n.offsetParent as HTMLElement | null;
+        }
+        return t;
+      };
+
+      const measure = () => {
+        vh = window.innerHeight;
+        maxScroll = Math.max(0, wrap.scrollHeight - vh);
+        spacer.style.height = `${vh + maxScroll + 2 * vh}px`;
+        cards = Array.from(wrap.querySelectorAll<HTMLElement>(".bp-card")).map((el) => ({
+          el,
+          top: topWithin(el, wrap),
+          h: el.offsetHeight,
+        }));
+        ScrollTrigger.refresh();
+      };
+
+      // Coalesce re-measures; the ResizeObserver fires after React re-lays the
+      // grid on a breakpoint change, so card offsets are never stale.
+      let measureRaf = 0;
+      const scheduleMeasure = () => {
+        cancelAnimationFrame(measureRaf);
+        measureRaf = requestAnimationFrame(measure);
+      };
+      const coarse = window.matchMedia("(pointer: coarse)").matches;
+      let lastW = window.innerWidth;
+      const onResize = () => {
+        // On touch devices ignore height-only resizes (URL bar collapse).
+        if (coarse && window.innerWidth === lastW) return;
+        lastW = window.innerWidth;
+        scheduleMeasure();
+      };
+
+      // Vault slides up over the sky during the first viewport of scroll.
+      gsap.fromTo(
+        panel,
+        { y: () => window.innerHeight },
+        {
+          y: 0,
+          ease: "none",
+          scrollTrigger: { start: 0, end: () => window.innerHeight, scrub: true, invalidateOnRefresh: true },
+        },
+      );
+
+      let lastSymbolAt = 0;
+      let lastY = -1;
+
+      const update = () => {
+        const y = window.scrollY;
+        const panelY = Math.max(0, vh - y);
+        const wrapY = -Math.max(0, y - vh);
+        wrap.style.transform = `translate3d(0, ${wrapY}px, 0)`;
+
+        // The sky is fully covered after the first viewport — stop compositing it.
+        stage.style.visibility = y >= vh ? "hidden" : "visible";
+        if (hint && y > 0) hint.style.opacity = String(Math.max(0, 1 - y / (vh * 0.4)));
+
+        for (const c of cards) {
+          const top = panelY + wrapY + c.top;
+          const bottom = top + c.h;
+          let s: number;
+          if (reduced) s = 1;
+          else if (bottom <= 0 || top >= vh) s = 0;
+          else s = Math.max(0, Math.min(1, Math.min((vh - top) / (vh * 0.6), bottom / (vh * 0.4))));
+          c.el.style.transform = `scale(${s})`;
+        }
+
+        // Outro: the footer slides up over the vault.
+        const outroStart = vh + maxScroll;
+        const p = Math.max(0, Math.min(1, (y - outroStart) / (vh - 100)));
+        footer.style.transform = `translate3d(0, ${(1 - p) * vh}px, 0)`;
+        const interactive = p > 0.55;
+        footer.style.pointerEvents = interactive ? "auto" : "none";
+        footer.toggleAttribute("inert", !interactive);
+
+        // The whole hero chrome (header, cover line, balance) bows out once
+        // the vault takes over; the footer carries the brand from there.
+        const fadeOut = Math.max(0, Math.min(1, (y - vh * 0.55) / (vh * 0.4)));
+        if (y > 0) {
+          const chrome = String(1 - fadeOut);
+          if (headline) headline.style.opacity = chrome;
+          if (brand) brand.style.opacity = chrome;
+          if (nav) nav.style.opacity = chrome;
+          info.style.opacity = chrome;
+          const gone = fadeOut > 0.5;
+          nav?.toggleAttribute("inert", gone);
+          info.toggleAttribute("inert", gone);
+        } else if (lastY > 0) {
+          // Instant jump back to top (Home key, scrollTo): restore defaults once.
+          for (const el of [headline, brand, nav, info, hint]) if (el) el.style.opacity = "";
+          nav?.removeAttribute("inert");
+          info.removeAttribute("inert");
+        }
+
+        const now = performance.now();
+        if (!reduced && y !== lastY && now - lastSymbolAt > 80 && symbolRef.current) {
+          symbolRef.current.textContent = SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)];
+          lastSymbolAt = now;
+        }
+        lastY = y;
+      };
+
+      measure();
+      gsap.ticker.add(update);
+      window.addEventListener("resize", onResize);
+      const ro = new ResizeObserver(scheduleMeasure);
+      ro.observe(wrap);
+      document.fonts?.ready.then(scheduleMeasure).catch(() => {});
+
+      return () => {
+        gsap.ticker.remove(update);
+        window.removeEventListener("resize", onResize);
+        ro.disconnect();
+        cancelAnimationFrame(measureRaf);
+      };
+    },
+    { scope: spacerRef },
+  );
+
+  return (
+    <div id="scroll-spacer" ref={spacerRef} style={{ height: "500vh" }}>
+      <main>
+        <h1 className="sr-only">Benzo: private USDC payments on Stellar</h1>
+        <VideoStage ref={stageRef} />
+        <GalleryPanel ref={panelRef} wrapRef={wrapRef} />
+        <SiteFooter ref={footerRef} />
+        <BrandMark />
+        <HeaderNav />
+        <RotatingHeadline />
+        <BalanceInfo ref={infoRef} symbolRef={symbolRef} />
+        <ScrollHint />
+      </main>
+      <CustomCursor />
+      <TransitionWave />
+    </div>
+  );
+}
