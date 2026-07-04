@@ -2,7 +2,7 @@ import { forwardRef, useEffect, useRef } from "react";
 import { motion } from "motion/react";
 import gsap from "gsap";
 import { TextPlugin } from "gsap/TextPlugin";
-import { CONSOLE_URL, EXPLORER_URL, GLYPH_PATH, LEAVE_EVENT, PHRASES, SOCIALS, WALLET_URL } from "../lib/config";
+import { CONSOLE_URL, EXPLORER_URL, GLYPH_PATH, HEADLINE, LEAVE_EVENT, SOCIALS, WALLET_URL } from "../lib/config";
 
 gsap.registerPlugin(TextPlugin);
 
@@ -53,39 +53,12 @@ export function HeaderNav() {
   );
 }
 
-/** Oversized cover line that cycles on a gentle timer while the hero is on screen. */
+/** Oversized static cover line. */
 export function RotatingHeadline() {
-  const innerRef = useRef<HTMLSpanElement>(null);
-
-  useEffect(() => {
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduced) return;
-    let i = 0;
-    const id = window.setInterval(() => {
-      // Only rotate while the hero is actually in view and the tab is visible.
-      if (document.hidden || window.scrollY > window.innerHeight * 0.5) return;
-      const el = innerRef.current;
-      if (!el) return;
-      i = (i + 1) % PHRASES.length;
-      const next = PHRASES[i];
-      gsap.killTweensOf(el);
-      gsap
-        .timeline()
-        .to(el, { yPercent: -58, opacity: 0, duration: 0.3, ease: "power2.in" })
-        .add(() => {
-          el.textContent = next;
-        })
-        .fromTo(el, { yPercent: 70, opacity: 0 }, { yPercent: 0, opacity: 1, duration: 0.5, ease: "power3.out" });
-    }, 3200);
-    return () => window.clearInterval(id);
-  }, []);
-
   return (
     <motion.div id="rot-headline" className="xchrome headline" {...rise(0.3)}>
       <div className="line-clip">
-        <span ref={innerRef} className="line display">
-          {PHRASES[0]}
-        </span>
+        <span className="line display">{HEADLINE}</span>
       </div>
       <p id="hero-sub" className="sub">
         A public chain never forgets a payment. Benzo shields USDC on Stellar, so your money is private

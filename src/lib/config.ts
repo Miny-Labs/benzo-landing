@@ -14,15 +14,8 @@ export const EXPLORER_URL =
 /** Fired when a door CTA is clicked; TransitionWave listens and navigates. */
 export const LEAVE_EVENT = "benzo:leave";
 
-/** Big rotating cover lines — one per stretch of scroll. */
-export const PHRASES = [
-  "Privacy with receipts.",
-  "Money that keeps to itself.",
-  "Split dinner without a paper trail.",
-  "Show the auditor totals, not salaries.",
-  "Forever is a long time for a receipt.",
-  "Private by default. Provable when it counts.",
-];
+/** The hero cover line. */
+export const HEADLINE = "Privacy with receipts.";
 
 /** Benzo brand glyph (from stellar-benzo apps/landing). */
 export const GLYPH_PATH =
