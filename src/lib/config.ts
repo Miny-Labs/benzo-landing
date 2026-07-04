@@ -16,11 +16,11 @@ export const LEAVE_EVENT = "benzo:leave";
 
 /** Big rotating cover lines — one per stretch of scroll. */
 export const PHRASES = [
+  "Privacy with receipts.",
   "Money that keeps to itself.",
-  "Your salary is nobody's business.",
-  "Your rent. Your business.",
   "Split dinner without a paper trail.",
-  "Run payroll without publishing it.",
+  "Show the auditor totals, not salaries.",
+  "Forever is a long time for a receipt.",
   "Private by default. Provable when it counts.",
 ];
 
