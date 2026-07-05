@@ -348,9 +348,41 @@ body {
 .vault-wrap {
   position: relative;
   width: 100%;
-  padding-top: min(400px, 40vh);
+  padding-top: 4vh;
   will-change: transform;
   transform: translate3d(0, 0, 0);
+}
+
+/* ————— full-screen scenes (apple-keynote scroll presentation) ————— */
+.scene {
+  position: relative;
+}
+.scene-pin {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  will-change: transform, opacity;
+}
+.scene-send {
+  height: 320vh;
+}
+.scene-statement {
+  height: 170vh;
+}
+.scene-how {
+  height: 260vh;
+}
+.statement {
+  margin: 0;
+  padding: 0 20px;
+  text-align: center;
+  color: var(--cream);
+  font-size: clamp(44px, 7.5vw, 128px);
+  line-height: 1.02;
+  letter-spacing: -0.03em;
 }
 .vault-intro {
   text-align: center;
@@ -378,7 +410,7 @@ body {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: clamp(14px, 1.8vw, 26px);
-  padding: 0 clamp(16px, 3vw, 48px);
+  padding: 8vh clamp(16px, 3vw, 48px) 4vh;
 }
 @media (max-width: 1023px) {
   .vault-grid {
@@ -457,12 +489,31 @@ body {
 }
 
 /* how it works — after the gallery */
-/* closes the vault, so it carries the bottom padding before the footer */
 .vault-how {
+  width: 100%;
   max-width: 1060px;
-  margin: 22vh auto 0;
-  padding: 0 clamp(20px, 4vw, 48px) 26vh;
+  margin: 0 auto;
+  padding: 0 clamp(20px, 4vw, 48px);
   color: var(--cream);
+}
+/* steps stagger in as the scene's scrub progress (--sp) advances */
+.scene-how .how-eyebrow {
+  opacity: clamp(0, calc(var(--sp, 1) * 8), 1);
+}
+.scene-how .step-1 {
+  opacity: clamp(0, calc((var(--sp, 1) - 0.1) * 4), 1);
+}
+.scene-how .step-2 {
+  opacity: clamp(0, calc((var(--sp, 1) - 0.28) * 4), 1);
+}
+.scene-how .step-3 {
+  opacity: clamp(0, calc((var(--sp, 1) - 0.46) * 4), 1);
+}
+@media (prefers-reduced-motion: reduce) {
+  .scene-how .how-eyebrow,
+  .scene-how .step {
+    opacity: 1 !important;
+  }
 }
 .vault-how .how-eyebrow {
   text-align: left;
@@ -509,11 +560,12 @@ body {
 }
 
 /* ————— the private send demo (sent over Avalanche) ————— */
-/* opens the vault right after the hero hand-off; the cards follow */
-.psend {
+/* the send demo fills its scene's stage */
+.psend-inner {
+  width: 100%;
   max-width: 1160px;
   margin: 0 auto;
-  padding: 2vh clamp(20px, 4vw, 48px) 24vh;
+  padding: 0 clamp(20px, 4vw, 48px);
   color: var(--cream);
 }
 .psend-eyebrow {

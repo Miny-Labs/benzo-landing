@@ -1,8 +1,6 @@
 import { forwardRef, useMemo, useSyncExternalStore } from "react";
-import { motion } from "motion/react";
 import PrivateSend from "./PrivateSend";
 import { GALLERY_IMAGES } from "../lib/config";
-import { reveal } from "../lib/reveal";
 
 /**
  * Scattered-grid layout (structure from the archive spec):
@@ -62,6 +60,13 @@ const STEPS = [
   },
 ];
 
+/**
+ * The vault: a sequence of full-screen scenes, Apple-keynote style. Each
+ * .scene is a tall section whose .scene-pin (100vh stage) the scroll engine
+ * pins to the viewport, fades in on arrival, feeds a --sp progress while
+ * pinned, and lifts away at the end. The card grid between scenes flows
+ * freely with its own scale choreography.
+ */
 const GalleryPanel = forwardRef<HTMLDivElement, Props>(function GalleryPanel({ wrapRef }, panelRef) {
   const cols = useSyncExternalStore(subscribeCols, getCols, () => 4);
   const cells = useMemo(() => buildLayout(GALLERY_IMAGES.length, cols), [cols]);
@@ -69,13 +74,21 @@ const GalleryPanel = forwardRef<HTMLDivElement, Props>(function GalleryPanel({ w
   return (
     <div ref={panelRef} className="vault" role="region" aria-label="What stays private">
       <div ref={wrapRef} className="vault-wrap">
-        <PrivateSend />
+        <section className="scene scene-send">
+          <div className="scene-pin">
+            <PrivateSend />
+          </div>
+        </section>
 
-        <motion.div className="vault-intro" {...reveal()}>
-          <span className="rule" />
-          <span className="line">Nobody's business but yours</span>
-          <span className="rule" />
-        </motion.div>
+        <section className="scene scene-statement">
+          <div className="scene-pin">
+            <p className="statement display">
+              Nobody's business
+              <br />
+              but yours.
+            </p>
+          </div>
+        </section>
 
         <div className="vault-grid">
           {cells.map((idx, i) => {
@@ -97,22 +110,26 @@ const GalleryPanel = forwardRef<HTMLDivElement, Props>(function GalleryPanel({ w
           })}
         </div>
 
-        <div className="vault-how">
-          <motion.div className="vault-intro how-eyebrow" {...reveal()}>
-            <span className="rule" />
-            <span className="line">Private, yet provable</span>
-            <span className="rule" />
-          </motion.div>
-          {STEPS.map((s, i) => (
-            <motion.div key={s.num} className="step" {...reveal(i * 0.12)}>
-              <span className="num">{s.num}</span>
-              <div>
-                <h2 className="verb display">{s.verb}</h2>
-                <p className="how-sub">{s.sub}</p>
+        <section className="scene scene-how">
+          <div className="scene-pin">
+            <div className="vault-how">
+              <div className="vault-intro how-eyebrow">
+                <span className="rule" />
+                <span className="line">Private, yet provable</span>
+                <span className="rule" />
               </div>
-            </motion.div>
-          ))}
-        </div>
+              {STEPS.map((s, i) => (
+                <div key={s.num} className={`step step-${i + 1}`}>
+                  <span className="num">{s.num}</span>
+                  <div>
+                    <h2 className="verb display">{s.verb}</h2>
+                    <p className="how-sub">{s.sub}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
       </div>
     </div>
   );

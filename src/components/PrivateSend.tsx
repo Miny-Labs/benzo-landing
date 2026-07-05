@@ -1,21 +1,78 @@
 import { useEffect, useRef } from "react";
-import { motion } from "motion/react";
 import gsap from "gsap";
-import { reveal } from "../lib/reveal";
 
-const GLYPHS = "0123456789abcdef";
+const HEX = "0123456789abcdef";
+const SCRAMBLE = "█▓▒░•§#%¤";
+const MASK = "$•••••";
+const IDLE_CAPTION = "· · · · · · · ·";
+const DONE_CAPTION = "0x••••••••";
 const BASE = 1067;
 const AMOUNT = 120;
 const fmt = (v: number) => `$${Math.round(v).toLocaleString("en-US")}`;
 
+/** Masked amount: shows bullets, scrambles to the real value on hover/tap. */
+function maskable(el: HTMLElement, getValue: () => string, reduced: boolean) {
+  let timer: number | null = null;
+  let shown = false;
+  const scrambleTo = (target: string) => {
+    if (reduced) {
+      el.textContent = target;
+      return;
+    }
+    if (timer) window.clearInterval(timer);
+    let frame = 0;
+    const total = 12;
+    timer = window.setInterval(() => {
+      frame++;
+      const resolved = Math.floor((frame / total) * target.length);
+      let out = "";
+      for (let i = 0; i < target.length; i++) {
+        out += i < resolved ? target[i] : SCRAMBLE[(Math.random() * SCRAMBLE.length) | 0];
+      }
+      el.textContent = out;
+      if (frame >= total && timer) {
+        window.clearInterval(timer);
+        timer = null;
+        el.textContent = target;
+      }
+    }, 40);
+  };
+  const reveal = () => {
+    shown = true;
+    scrambleTo(getValue());
+  };
+  const hide = () => {
+    shown = false;
+    scrambleTo(MASK);
+  };
+  const toggle = () => (shown ? hide() : reveal());
+  el.textContent = MASK;
+  el.addEventListener("mouseenter", reveal);
+  el.addEventListener("mouseleave", hide);
+  el.addEventListener("touchstart", toggle, { passive: true });
+  return {
+    refresh: () => {
+      if (shown && !timer) el.textContent = getValue();
+    },
+    detach: () => {
+      if (timer) window.clearInterval(timer);
+      el.removeEventListener("mouseenter", reveal);
+      el.removeEventListener("mouseleave", hide);
+      el.removeEventListener("touchstart", toggle);
+    },
+  };
+}
+
 /**
- * Looping demo of a private send: the payment seals on your card, crosses the
- * Avalanche rail as a ciphered packet (the network caption scrambles while
- * it's in flight), and unseals only on @maria's card. Pauses offscreen;
- * reduced motion gets the composed final frame.
+ * Scroll-scrubbed demo of a private send. The surrounding .scene drives a
+ * --sp progress custom property (set by the scroll engine); this component
+ * maps it onto a paused GSAP timeline, so the payment seals, crosses the
+ * Avalanche rail as a ciphered packet, and lands on @maria's card exactly
+ * in step with the visitor's scroll — forward and backward. Both balances
+ * stay masked; hover or tap de-scrambles them.
  */
 export default function PrivateSend() {
-  const rootRef = useRef<HTMLElement>(null);
+  const rootRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const root = rootRef.current!;
@@ -28,138 +85,127 @@ export default function PrivateSend() {
     const netcap = q(".rail-cipher")[0] as HTMLElement;
     const sendline = q(".psending")[0] as HTMLElement;
     const plus = q(".pplus")[0] as HTMLElement;
-    const rbal = q(".ps-rbal")[0] as HTMLElement;
+    const yourBal = q(".ps-ybal")[0] as HTMLElement;
+    const mariaBal = q(".ps-rbal")[0] as HTMLElement;
     const receipt = q(".ppriv")[0] as HTMLElement;
+
+    const state = { bal: BASE };
+    const yourMask = maskable(yourBal, () => "$8,214", reduced);
+    const mariaMask = maskable(mariaBal, () => fmt(state.bal), reduced);
 
     if (reduced) {
       packet.style.display = "none";
       sendline.style.opacity = "1";
       plus.style.opacity = "1";
       receipt.style.opacity = "1";
-      rbal.textContent = fmt(BASE + AMOUNT);
-      netcap.textContent = "0x••••••••";
-      return;
+      state.bal = BASE + AMOUNT;
+      netcap.textContent = DONE_CAPTION;
+      return () => {
+        yourMask.detach();
+        mariaMask.detach();
+      };
     }
 
     const mobile = window.matchMedia("(max-width: 639px)");
+    const scene = root.closest<HTMLElement>(".scene");
     let tl: gsap.core.Timeline | null = null;
     let scrambleAt = 0;
-    let inFlight = false;
 
-    const reset = () => {
+    const build = () => {
+      tl?.kill();
       gsap.set(packet, { x: 0, y: 0, scale: 0, opacity: 1, clearProps: "backgroundColor" });
       gsap.set(note, { opacity: 1 });
       gsap.set(cipherFace, { opacity: 0 });
-      gsap.set([plus, receipt], { opacity: 0, y: 6 });
-      gsap.set(sendline, { opacity: 0 });
-      rbal.textContent = fmt(BASE);
-      netcap.textContent = "· · · · · · · ·";
-    };
+      gsap.set([plus, receipt, sendline], { opacity: 0, y: 6 });
+      gsap.set(sendline, { y: 0 });
 
-    const build = () => {
-      const wasPlaying = tl ? !tl.paused() : false;
-      tl?.kill();
-      reset();
       const vertical = mobile.matches;
-      // keep the packet inside the pill's straight section, clear of the caps
       const PAD = 28;
       const dist = vertical
         ? track.clientHeight - packet.offsetHeight - PAD * 2
         : track.clientWidth - packet.offsetWidth - PAD * 2;
       const travel = vertical ? { y: dist } : { x: dist };
-      const bal = { v: BASE };
 
       tl = gsap
-        .timeline({
-          repeat: -1,
-          repeatDelay: 1.6,
-          paused: true,
-          onRepeat: () => {
-            bal.v = BASE;
-            reset();
-          },
-          onUpdate: () => {
-            if (!inFlight) return;
-            const now = performance.now();
-            if (now - scrambleAt < 70) return;
-            scrambleAt = now;
-            let s = "0x";
-            for (let i = 0; i < 8; i++) s += GLYPHS[(Math.random() * GLYPHS.length) | 0];
-            netcap.textContent = s;
-          },
-        })
+        .timeline({ paused: true })
         .to(sendline, { opacity: 1, duration: 0.4 })
-        .to(packet, { scale: 1, duration: 0.35, ease: "power3.out" }, "+=0.25")
-        .add(() => {
-          inFlight = true;
-        }, "+=0.3")
-        .to(note, { opacity: 0, duration: 0.2 }, "<")
-        .to(cipherFace, { opacity: 1, duration: 0.2 }, "<")
-        .to(packet, { backgroundColor: "#1a2135", duration: 0.25 }, "<")
-        .to(packet, { ...travel, duration: 1.7, ease: "power1.inOut" }, "<")
-        .add(() => {
-          inFlight = false;
-          netcap.textContent = "0x••••••••";
-        })
+        .to(packet, { scale: 1, duration: 0.35, ease: "power3.out" }, "+=0.2")
+        .addLabel("flightStart", "+=0.25")
+        .to(note, { opacity: 0, duration: 0.2 }, "flightStart")
+        .to(cipherFace, { opacity: 1, duration: 0.2 }, "flightStart")
+        .to(packet, { backgroundColor: "#1a2135", duration: 0.25 }, "flightStart")
+        .to(packet, { ...travel, duration: 1.7, ease: "power1.inOut" }, "flightStart")
+        .addLabel("flightEnd")
         .to(packet, { scale: 0, opacity: 0, duration: 0.3, ease: "power2.in" })
         .to(plus, { opacity: 1, y: 0, duration: 0.45, ease: "power3.out" }, "<+=0.1")
-        .to(bal, {
-          v: BASE + AMOUNT,
-          duration: 0.7,
+        .to(state, {
+          bal: BASE + AMOUNT,
+          duration: 0.6,
           ease: "power2.out",
-          onUpdate: () => {
-            rbal.textContent = fmt(bal.v);
-          },
+          onUpdate: () => mariaMask.refresh(),
         }, "<")
-        .to(receipt, { opacity: 1, y: 0, duration: 0.4 }, "-=0.25")
-        .to([plus, sendline], { opacity: 0, duration: 0.5 }, "+=1.3");
-      if (wasPlaying) tl.play();
+        .to(receipt, { opacity: 1, y: 0, duration: 0.4 }, "-=0.2")
+        .to({}, { duration: 0.35 }); // settle
       return tl;
     };
 
     build();
 
-    const io = new IntersectionObserver(
-      ([entry]) => {
-        if (!tl) return;
-        if (entry.isIntersecting) tl.play();
-        else tl.pause();
-      },
-      { threshold: 0.25 },
-    );
-    io.observe(root);
+    // scrub: the scroll engine writes --sp (0..1) on the scene while pinned
+    const update = () => {
+      if (!tl || !scene) return;
+      const sp = parseFloat(scene.style.getPropertyValue("--sp") || "0");
+      const p = Math.max(0, Math.min(1, (sp - 0.04) / 0.9));
+      tl.progress(p, false);
+
+      const t = tl.time();
+      const start = tl.labels.flightStart ?? 0;
+      const end = tl.labels.flightEnd ?? 0;
+      if (t > start && t < end) {
+        const now = performance.now();
+        if (now - scrambleAt > 70) {
+          scrambleAt = now;
+          let s = "0x";
+          for (let i = 0; i < 8; i++) s += HEX[(Math.random() * HEX.length) | 0];
+          netcap.textContent = s;
+        }
+      } else {
+        netcap.textContent = t >= end ? DONE_CAPTION : IDLE_CAPTION;
+      }
+    };
+    gsap.ticker.add(update);
 
     const onBreak = () => build();
     mobile.addEventListener("change", onBreak);
 
     return () => {
-      io.disconnect();
+      gsap.ticker.remove(update);
       mobile.removeEventListener("change", onBreak);
       tl?.kill();
+      yourMask.detach();
+      mariaMask.detach();
     };
   }, []);
 
   return (
-    <section ref={rootRef} className="psend" aria-label="A private send, animated">
-      <motion.div className="vault-intro psend-eyebrow" {...reveal()}>
+    <div ref={rootRef} className="psend-inner" aria-label="A private send, scrubbed by scroll">
+      <div className="vault-intro psend-eyebrow">
         <span className="rule" />
         <span className="line">Sent over Avalanche</span>
         <span className="rule" />
-      </motion.div>
-      <motion.h2 className="psend-title display" {...reveal(0.08)}>
-        Watch a send stay private.
-      </motion.h2>
+      </div>
+      <h2 className="psend-title display">Watch a send stay private.</h2>
 
       <div className="psend-stage">
-        <motion.div className="pcard" {...reveal(0.15)}>
+        <div className="pcard">
           <span className="pname">You</span>
-          <span className="pbal display tnum">$8,214</span>
+          <span className="pbal display tnum ps-ybal" data-cursor title="Hover to reveal" />
           <span className="psending">
             Sending <b>$120</b> to @maria
           </span>
-        </motion.div>
+        </div>
 
-        <motion.div className="prail" {...reveal(0.3)}>
+        <div className="prail">
           <div className="rail-track">
             <svg className="rail-logo" viewBox="0 0 639 564" aria-hidden="true">
               <path
@@ -177,17 +223,17 @@ export default function PrivateSend() {
             </div>
           </div>
           <div className="rail-caption">
-            What the network sees <span className="rail-cipher tnum">· · · · · · · ·</span>
+            What the network sees <span className="rail-cipher tnum">{IDLE_CAPTION}</span>
           </div>
-        </motion.div>
+        </div>
 
-        <motion.div className="pcard" {...reveal(0.45)}>
+        <div className="pcard">
           <span className="pname">@maria</span>
-          <span className="pbal display tnum ps-rbal">{fmt(BASE)}</span>
+          <span className="pbal display tnum ps-rbal" data-cursor title="Hover to reveal" />
           <span className="pplus display tnum">+$120</span>
           <span className="ppriv">✓ Private receipt saved</span>
-        </motion.div>
+        </div>
       </div>
-    </section>
+    </div>
   );
 }

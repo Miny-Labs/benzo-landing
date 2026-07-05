@@ -53,6 +53,7 @@ export default function App() {
       let vh = window.innerHeight;
       let maxScroll = 0;
       let cards: { el: HTMLElement; top: number; h: number; tag: HTMLElement | null }[] = [];
+      let scenes: { el: HTMLElement; pin: HTMLElement; top: number; h: number }[] = [];
 
       const topWithin = (el: HTMLElement, root: HTMLElement) => {
         let t = 0;
@@ -74,6 +75,10 @@ export default function App() {
           h: el.offsetHeight,
           tag: el.parentElement?.querySelector<HTMLElement>(".cell-tag") ?? null,
         }));
+        scenes = Array.from(wrap.querySelectorAll<HTMLElement>(".scene")).flatMap((el) => {
+          const pin = el.querySelector<HTMLElement>(".scene-pin");
+          return pin ? [{ el, pin, top: topWithin(el, wrap), h: el.offsetHeight }] : [];
+        });
         ScrollTrigger.refresh();
       };
 
@@ -126,6 +131,23 @@ export default function App() {
           else s = Math.max(0, Math.min(1, Math.min((vh - top) / (vh * 0.6), bottom / (vh * 0.4))));
           c.el.style.transform = `scale(${s})`;
           if (c.tag) c.tag.style.opacity = String(s);
+        }
+
+        // Scenes: pin each 100vh stage while its tall section passes, fade it
+        // in on arrival, expose scrub progress as --sp, lift it away after.
+        for (const s of scenes) {
+          const topVp = panelY + wrapY + s.top;
+          const pinRange = Math.max(0, s.h - vh);
+          const pinOffset = Math.min(Math.max(-topVp, 0), pinRange);
+          s.pin.style.transform = `translate3d(0, ${pinOffset}px, 0)`;
+          s.el.style.setProperty("--sp", (pinRange ? pinOffset / pinRange : 1).toFixed(4));
+          if (reduced) {
+            s.pin.style.opacity = "1";
+          } else {
+            const fadeIn = Math.max(0, Math.min(1, (vh * 0.9 - topVp) / (vh * 0.45)));
+            const exitP = Math.max(0, Math.min(1, (-topVp - pinRange) / (vh * 0.4)));
+            s.pin.style.opacity = String(Math.min(fadeIn, 1 - exitP));
+          }
         }
 
         // Outro: the footer slides up over the vault.
