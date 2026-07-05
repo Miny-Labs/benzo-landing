@@ -147,12 +147,11 @@ export const BalanceInfo = forwardRef<HTMLDivElement, { symbolRef: React.Ref<HTM
           ref={amountRef}
           className="amount display tnum"
           data-cursor
-          title="Demo balance — hover to preview, only you can do this"
+          title="Demo balance"
           aria-label="Private balance, hidden. Hover to preview a demo amount."
         >
           {MASKED}
         </div>
-        <div className="sub">Only you can see this</div>
       </motion.div>
     );
   },
@@ -160,7 +159,7 @@ export const BalanceInfo = forwardRef<HTMLDivElement, { symbolRef: React.Ref<HTM
 
 export const ScrollHint = () => (
   <motion.div id="scroll-hint" className="xchrome hint" {...fade(0.7)} aria-hidden="true">
-    Scroll to make it private
+    Scroll to see the magic
   </motion.div>
 );
 
