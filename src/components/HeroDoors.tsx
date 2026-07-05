@@ -40,34 +40,14 @@ export default function HeroDoors() {
   const panelRef = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState<DoorKey | null>(null);
   const hideTimer = useRef<number | null>(null);
+  const lastShown = useRef<DoorKey>("personal");
 
-  // magnetic square + click ceremony
+  // click ceremony (the card itself never moves — hover only changes emphasis)
   useEffect(() => {
     const root = rootRef.current!;
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const fine = window.matchMedia("(pointer: fine)").matches;
     const cleanups: Array<() => void> = [];
     let leaving = false;
-
-    if (fine && !reduced) {
-      const onMove = (e: MouseEvent) => {
-        if (leaving) return;
-        const r = root.getBoundingClientRect();
-        gsap.to(root, {
-          x: (e.clientX - (r.left + r.width / 2)) * 0.14,
-          y: (e.clientY - (r.top + r.height / 2)) * 0.18,
-          duration: 0.4,
-          ease: "power3.out",
-        });
-      };
-      const onLeave = () => gsap.to(root, { x: 0, y: 0, duration: 0.55, ease: "power3.out" });
-      root.addEventListener("mousemove", onMove);
-      root.addEventListener("mouseleave", onLeave);
-      cleanups.push(() => {
-        root.removeEventListener("mousemove", onMove);
-        root.removeEventListener("mouseleave", onLeave);
-      });
-    }
 
     for (const door of Array.from(root.querySelectorAll<HTMLAnchorElement>("a.tri"))) {
       const onClick = (e: MouseEvent) => {
@@ -169,7 +149,9 @@ export default function HeroDoors() {
     hideTimer.current = window.setTimeout(() => setActive(null), 140);
   };
 
-  const content = active ? CONTENT[active] : null;
+  // the panel slot is reserved; content lingers through the fade-out
+  if (active) lastShown.current = active;
+  const content = CONTENT[active ?? lastShown.current];
 
   return (
     <>
@@ -189,22 +171,18 @@ export default function HeroDoors() {
       </div>
 
       <div ref={panelRef} className="door-panel" aria-hidden={!active}>
-        {content && (
-          <>
-            <p className="dp-kicker">{content.kicker}</p>
-            <h3 className="dp-title display">{content.title}</h3>
-            {content.points.map((p) => (
-              <div className="dp-clip" key={p}>
-                <p className="dp-row">
-                  <span className="dp-dash" aria-hidden="true">
-                    —
-                  </span>
-                  {p}
-                </p>
-              </div>
-            ))}
-          </>
-        )}
+        <p className="dp-kicker">{content.kicker}</p>
+        <h3 className="dp-title display">{content.title}</h3>
+        {content.points.map((p) => (
+          <div className="dp-clip" key={p}>
+            <p className="dp-row">
+              <span className="dp-dash" aria-hidden="true">
+                —
+              </span>
+              {p}
+            </p>
+          </div>
+        ))}
       </div>
     </>
   );

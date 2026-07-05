@@ -240,10 +240,11 @@ body {
   }
 }
 
-/* private balance block (bottom right, inset so the reveal never clips) */
+/* private balance: the proof object, anchored to the right column (up and
+   away from the flowers so the reveal never fights the illustration) */
 .balance {
-  right: 88px;
-  bottom: 96px;
+  right: 130px;
+  bottom: 160px;
   width: 330px;
   display: flex;
   flex-direction: column;
@@ -252,6 +253,7 @@ body {
 .balance .amount {
   pointer-events: auto;
   cursor: none;
+  min-width: 330px;
 }
 .balance .head {
   width: 100%;
@@ -801,14 +803,15 @@ body {
   box-shadow: 0 34px 90px oklch(0.1 0.02 262 / 0.55);
 }
 
-/* ————— the doors: two triangles, one wide rectangle ————— */
+/* ————— the doors: two triangles, one wide rectangle. The card's frame is
+   part of the page skeleton — hover changes emphasis inside it, never its
+   position or size. ————— */
 .doors {
   position: relative;
   margin-top: 32px;
   width: min(480px, 36vw);
   height: clamp(150px, 13vw, 196px);
   pointer-events: auto;
-  will-change: transform;
 }
 .tri {
   position: absolute;
@@ -893,12 +896,14 @@ body {
   opacity: 0.65;
 }
 
-/* the hover panel decrypts into the open sky, above the private balance */
+/* the hover panel owns a reserved slot in the right column — it only ever
+   fades in place, aligned above the balance proof block */
 .door-panel {
   position: fixed;
-  right: clamp(48px, 7vw, 130px);
-  top: 22vh;
-  width: min(400px, 30vw);
+  left: 66vw;
+  top: clamp(190px, 21vh, 250px);
+  width: clamp(380px, 26vw, 520px);
+  min-height: 260px;
   z-index: 25;
   color: var(--ink);
   opacity: 0;
@@ -1231,18 +1236,9 @@ body {
   transform: scale(1.35);
 }
 /* the hover still takes over as cursor on the stage scenes */
-.cursor.suppress {
+.cursor.suppress,
+.cursor.quiet {
   opacity: 0 !important;
-}
-/* over the footer pills exclusion would land on olive — go solid cream */
-.cursor.solid {
-  mix-blend-mode: normal;
-}
-.cursor.solid svg circle {
-  stroke: var(--cream);
-}
-.cursor.solid svg path {
-  fill: var(--cream);
 }
 @media (pointer: fine) and (min-width: 1024px) {
   .cursor {
@@ -1253,7 +1249,7 @@ body {
 /* scroll hint (hero) */
 .hint {
   left: 50%;
-  bottom: 26px;
+  bottom: 36px;
   transform: translateX(-50%);
   font-size: 11px;
   letter-spacing: 0.22em;

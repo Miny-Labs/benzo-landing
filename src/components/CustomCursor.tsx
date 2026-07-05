@@ -17,7 +17,9 @@ export default function CustomCursor() {
     const onOver = (e: MouseEvent) => {
       const t = e.target as HTMLElement;
       el.classList.toggle("grow", !!t.closest("a, button, [data-cursor]"));
-      el.classList.toggle("solid", !!t.closest(".tri"));
+      // over the door card and the balance digits the ring steps aside —
+      // the highlight and the reveal are the feedback there
+      el.classList.toggle("quiet", !!t.closest(".tri, .balance .amount"));
     };
     const onLeave = () => el.classList.remove("on");
 
