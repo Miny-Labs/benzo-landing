@@ -53,17 +53,18 @@ export function HeaderNav() {
   );
 }
 
-/** Oversized static cover line. */
+/** Hero block: title, subtitle, and the doors in one composed unit. */
 export function RotatingHeadline() {
   return (
-    <motion.div id="rot-headline" className="xchrome headline" {...rise(0.3)}>
+    <motion.div id="rot-headline" className="headline" {...fade(0.3)}>
       <div className="line-clip">
         <span className="line display">{HEADLINE}</span>
       </div>
       <p id="hero-sub" className="sub">
-        A public chain never forgets a payment. Benzo shields USDC on Stellar, so your money is private
-        by default and you can still prove what you need to.
+        Send, request, and receive money without putting your balance, income, or payment history on
+        display. Benzo gives every payment a private receipt you can prove when needed.
       </p>
+      <OutroCtas />
     </motion.div>
   );
 }

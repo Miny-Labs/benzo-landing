@@ -16,7 +16,7 @@ export const EXPLORER_URL =
 export const LEAVE_EVENT = "benzo:leave";
 
 /** The hero cover line. */
-export const HEADLINE = "Privacy with receipts.";
+export const HEADLINE = "Private like cash.";
 
 /** Benzo brand glyph (from stellar-benzo apps/landing). */
 export const GLYPH_PATH =

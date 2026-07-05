@@ -8,7 +8,7 @@ import CustomCursor from "./components/CustomCursor";
 import TransitionWave from "./components/TransitionWave";
 import SiteFooter from "./components/SiteFooter";
 import StepHoverImages from "./components/StepHoverImages";
-import { BalanceInfo, BrandMark, HeaderNav, OutroCtas, RotatingHeadline, ScrollHint } from "./components/overlays";
+import { BalanceInfo, BrandMark, HeaderNav, RotatingHeadline, ScrollHint } from "./components/overlays";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 // Mobile URL-bar collapse fires resize; don't let it rebuild the scrub.
@@ -193,7 +193,6 @@ export default function App() {
         <BrandMark />
         <HeaderNav />
         <RotatingHeadline />
-        <OutroCtas />
         <BalanceInfo ref={infoRef} symbolRef={symbolRef} />
         <ScrollHint />
       </main>
