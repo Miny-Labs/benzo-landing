@@ -185,7 +185,7 @@ export default function App() {
   return (
     <div id="scroll-spacer" ref={spacerRef} style={{ height: "500vh" }}>
       <main>
-        <h1 className="sr-only">Benzo: private USDC payments on Stellar</h1>
+        <h1 className="sr-only">Benzo: private USDC payments on Avalanche</h1>
         <VideoStage ref={stageRef} />
         <GalleryPanel ref={panelRef} wrapRef={wrapRef} />
         <StepHoverImages />

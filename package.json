@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
-  "description": "Benzo — private USDC on Stellar. Scroll-driven landing page.",
+  "description": "Benzo: private USDC on Avalanche. Scroll-driven landing page.",
   "scripts": {
     "dev": "vite",
     "build": "tsc --noEmit && vite build",

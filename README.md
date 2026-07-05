@@ -1,7 +1,7 @@
 # Benzo landing page
 
-Scroll-driven landing page for [Benzo](https://github.com/Miny-Labs), private USDC payments on Stellar.
-The protocol, wallet, and console live in the `stellar-benzo` repo.
+Scroll-driven landing page for [Benzo](https://github.com/Miny-Labs), private USDC payments on Avalanche.
+The protocol, wallet, and console live in the team's protocol repo.
 
 ## How the page works
 

@@ -57,7 +57,7 @@ const SiteFooter = forwardRef<HTMLDivElement>(function SiteFooter(_p, ref) {
             Apache-2.0
           </a>
           <span className="live">
-            <span className="dot" /> Live on Stellar testnet
+            <span className="dot" /> Live on Avalanche Fuji testnet
           </span>
         </div>
       </div>
