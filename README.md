@@ -16,7 +16,9 @@ One continuous scroll, three scenes:
    still lifes of things that are nobody's business scale in and out, each captioned in the empty
    space beside it. The images were generated with gpt-image-2, style-anchored to a frame of the sky
    film so the whole page reads as one world. Hovering the SHIELD / SEND / PROVE rows reveals a
-   matching still that glides after the cursor.
+   matching still that glides after the cursor. The vault closes with a looping demo of a private
+   send: the payment crosses an Avalanche-red rail as a ciphered packet the network can't read, and
+   unseals only on the recipient's card.
 3. **The footer.** An ink slide with an animated dot band, nav columns, and an oversized wordmark.
    Clicking a door plays a short send-off: the label rewrites itself to "Opening privately…", petals
    scatter from the click point, and a violet wave sweeps up before the browser navigates to the

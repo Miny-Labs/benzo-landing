@@ -59,6 +59,9 @@ const SiteFooter = forwardRef<HTMLDivElement>(function SiteFooter(_p, ref) {
           <span className="live">
             <span className="dot" /> Live on Avalanche Fuji testnet
           </span>
+          <a className="avax-badge" href="https://www.avax.network" target="_blank" rel="noreferrer">
+            <img src="/avax/powered-by-avalanche.svg" alt="Powered by Avalanche" />
+          </a>
         </div>
       </div>
     </footer>

@@ -1,4 +1,5 @@
 import { forwardRef, useMemo, useSyncExternalStore } from "react";
+import PrivateSend from "./PrivateSend";
 import { GALLERY_IMAGES } from "../lib/config";
 
 /**
@@ -108,6 +109,8 @@ const GalleryPanel = forwardRef<HTMLDivElement, Props>(function GalleryPanel({ w
             </div>
           ))}
         </div>
+
+        <PrivateSend />
       </div>
     </div>
   );
