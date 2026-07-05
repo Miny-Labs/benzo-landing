@@ -31,9 +31,9 @@ type DoorKey = keyof typeof CONTENT;
 /**
  * The two doors as one square: Personal and Business are two triangles that
  * meet on the diagonal. Hovering a triangle lets it claim more of the square
- * (the seam slides), the whole square follows the cursor magnetically, and a
- * feature panel decrypts into the open sky on the right. Clicking runs the
- * petal send-off and the violet wave.
+ * (the seam slides), the slab tilts toward the cursor without leaving its
+ * spot, and a feature panel decrypts into the open sky on the right. Clicking
+ * runs the petal send-off and the violet wave.
  */
 export default function HeroDoors() {
   const rootRef = useRef<HTMLDivElement>(null);
@@ -95,6 +95,34 @@ export default function HeroDoors() {
     };
     window.addEventListener("pageshow", onPageShow);
     cleanups.push(() => window.removeEventListener("pageshow", onPageShow));
+
+    // the slab tilts toward whichever part the cursor is over — rotation only,
+    // the card's footprint on the page never changes
+    const card = root.querySelector<HTMLElement>(".doors-card");
+    if (card && !reduced && window.matchMedia("(pointer: fine)").matches) {
+      const BX = 9;
+      const BY = -8; // resting pose, mirrors the CSS transform
+      gsap.set(card, { rotationX: BX, rotationY: BY });
+      const rx = gsap.quickTo(card, "rotationX", { duration: 0.5, ease: "power3.out" });
+      const ry = gsap.quickTo(card, "rotationY", { duration: 0.5, ease: "power3.out" });
+      const onTilt = (e: MouseEvent) => {
+        const r = root.getBoundingClientRect();
+        const nx = (e.clientX - r.left) / r.width - 0.5;
+        const ny = (e.clientY - r.top) / r.height - 0.5;
+        rx(BX + ny * 14);
+        ry(BY - nx * 16);
+      };
+      const onRest = () => {
+        rx(BX);
+        ry(BY);
+      };
+      root.addEventListener("mousemove", onTilt);
+      root.addEventListener("mouseleave", onRest);
+      cleanups.push(() => {
+        root.removeEventListener("mousemove", onTilt);
+        root.removeEventListener("mouseleave", onRest);
+      });
+    }
 
     return () => cleanups.forEach((fn) => fn());
   }, []);
