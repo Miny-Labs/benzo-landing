@@ -117,11 +117,6 @@ const GalleryPanel = forwardRef<HTMLDivElement, Props>(function GalleryPanel({ w
           <section className="scene scene-stepstack">
             <div className="scene-pin">
               <div className="steps-stack">
-                <div className="vault-intro stage-eyebrow">
-                  <span className="rule" />
-                  <span className="line">Private, yet provable</span>
-                  <span className="rule" />
-                </div>
                 {STEPS.map((s) => (
                   <div className="stack-row" key={s.num}>
                     <span className="stack-num tnum">{s.num}</span>
