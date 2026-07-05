@@ -22,22 +22,26 @@ const SiteFooter = forwardRef<HTMLDivElement>(function SiteFooter(_p, ref) {
           </motion.div>
 
           <motion.nav className="site-footer__nav" aria-label="Product" {...reveal(0.1)}>
-            <a href={WALLET_URL}>Wallet</a>
-            <a href={CONSOLE_URL}>Console</a>
+            <a href={WALLET_URL}>
+              Wallet <span className="fcta-arrow">↗</span>
+            </a>
+            <a href={CONSOLE_URL}>
+              Console <span className="fcta-arrow">↗</span>
+            </a>
             <a href={EXPLORER_URL} target="_blank" rel="noreferrer">
-              Testnet explorer
+              Testnet explorer <span className="fcta-arrow">↗</span>
             </a>
           </motion.nav>
 
           <motion.nav className="site-footer__nav" aria-label="Company" {...reveal(0.18)}>
             <a href={SOCIALS.github} target="_blank" rel="noreferrer">
-              GitHub
+              GitHub <span className="fcta-arrow">↗</span>
             </a>
             <a href={SOCIALS.x} target="_blank" rel="noreferrer">
-              Follow us on X
+              Follow us on X <span className="fcta-arrow">↗</span>
             </a>
             <a href={SOCIALS.linkedin} target="_blank" rel="noreferrer">
-              LinkedIn
+              LinkedIn <span className="fcta-arrow">↗</span>
             </a>
           </motion.nav>
         </div>
@@ -54,14 +58,6 @@ const SiteFooter = forwardRef<HTMLDivElement>(function SiteFooter(_p, ref) {
             </a>
             <a className="avax-badge" href="https://www.avax.network" target="_blank" rel="noreferrer">
               <img src="/avax/powered-by-avalanche-red.svg" alt="Powered by Avalanche" />
-            </a>
-          </div>
-          <div className="footer-ctas">
-            <a className="fcta display" href={WALLET_URL}>
-              Open the wallet <span className="fcta-arrow">↗</span>
-            </a>
-            <a className="fcta display" href={CONSOLE_URL}>
-              Open the console <span className="fcta-arrow">↗</span>
             </a>
           </div>
         </motion.div>
