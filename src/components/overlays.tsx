@@ -1,10 +1,7 @@
 import { forwardRef, useEffect, useRef } from "react";
 import { motion } from "motion/react";
-import gsap from "gsap";
-import { TextPlugin } from "gsap/TextPlugin";
-import { CONSOLE_URL, EXPLORER_URL, GLYPH_PATH, HEADLINE, LEAVE_EVENT, SOCIALS, WALLET_URL } from "../lib/config";
-
-gsap.registerPlugin(TextPlugin);
+import HeroDoors from "./HeroDoors";
+import { EXPLORER_URL, GLYPH_PATH, HEADLINE, SOCIALS } from "../lib/config";
 
 const EASE = [0.25, 0.1, 0.25, 1] as const;
 // When the page loads already scrolled (reload mid-page, bfcache), skip entry
@@ -64,7 +61,7 @@ export function HeroBlock() {
         Send, request, and receive money without putting your balance, income, or payment history on
         display. Benzo gives every payment a private receipt you can prove when needed.
       </p>
-      <OutroCtas />
+      <HeroDoors />
     </motion.div>
   );
 }
@@ -162,127 +159,3 @@ export const ScrollHint = () => (
     Scroll to see the magic
   </motion.div>
 );
-
-/** The two doors, under the hero subtitle. Full send-off ceremony on click. */
-export function OutroCtas() {
-  const rootRef = useRef<HTMLDivElement | null>(null);
-
-  useEffect(() => {
-    const root = rootRef.current!;
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const fine = window.matchMedia("(pointer: fine)").matches;
-    const pills = Array.from(root.querySelectorAll<HTMLAnchorElement>("a.pill"));
-    const cleanups: Array<() => void> = [];
-    let leaving = false;
-
-    for (const pill of pills) {
-      // Magnetic pull toward the cursor (desktop only).
-      if (fine && !reduced) {
-        const onMove = (e: MouseEvent) => {
-          if (leaving) return;
-          const r = pill.getBoundingClientRect();
-          gsap.to(pill, {
-            x: (e.clientX - (r.left + r.width / 2)) * 0.16,
-            y: (e.clientY - (r.top + r.height / 2)) * 0.28,
-            duration: 0.4,
-            ease: "power3.out",
-          });
-        };
-        const onLeave = () => gsap.to(pill, { x: 0, y: 0, duration: 0.55, ease: "power3.out" });
-        pill.addEventListener("mousemove", onMove);
-        pill.addEventListener("mouseleave", onLeave);
-        cleanups.push(() => {
-          pill.removeEventListener("mousemove", onMove);
-          pill.removeEventListener("mouseleave", onLeave);
-        });
-      }
-
-      // Send-off ceremony: the label admits what it's doing, petals scatter,
-      // the violet wave carries the visitor through the door.
-      const onClick = (e: MouseEvent) => {
-        if (reduced || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
-        e.preventDefault();
-        if (leaving) return;
-        leaving = true;
-
-        const label = pill.querySelector(".big");
-        if (label) {
-          gsap.to(label, { duration: 0.45, text: { value: "Opening privately…", type: "diff" }, ease: "sine.in" });
-        }
-        gsap.fromTo(pill, { scale: 0.97 }, { scale: 1, duration: 0.4, ease: "power3.out" });
-
-        const r = root.getBoundingClientRect();
-        const cx = (e.clientX || r.left + r.width / 2) - r.left;
-        const cy = (e.clientY || r.top + r.height / 2) - r.top;
-        const colors = ["#efeee9", "#c9b8f5", "#7342e2", "#9d81ec"];
-        for (let i = 0; i < 14; i++) {
-          const petal = document.createElement("span");
-          petal.className = "petal";
-          petal.style.left = `${cx}px`;
-          petal.style.top = `${cy}px`;
-          petal.style.background = colors[i % colors.length];
-          root.appendChild(petal);
-          const ang = (i / 14) * Math.PI * 2 + Math.random() * 0.5;
-          const dist = 34 + Math.random() * 66;
-          gsap.fromTo(
-            petal,
-            { scale: 0, rotation: Math.random() * 160 },
-            {
-              x: Math.cos(ang) * dist,
-              y: Math.sin(ang) * dist + 42,
-              scale: 0.5 + Math.random() * 0.8,
-              rotation: "+=140",
-              opacity: 0,
-              duration: 0.55 + Math.random() * 0.35,
-              ease: "power2.out",
-              onComplete: () => petal.remove(),
-            },
-          );
-        }
-
-        window.dispatchEvent(new CustomEvent(LEAVE_EVENT, { detail: { href: pill.href } }));
-      };
-      pill.addEventListener("click", onClick);
-      cleanups.push(() => pill.removeEventListener("click", onClick));
-    }
-
-    // bfcache restore: un-latch the ceremony and restore the door labels.
-    const originalLabels = pills.map((pill) => pill.querySelector(".big")?.textContent ?? "");
-    const onPageShow = (e: PageTransitionEvent) => {
-      if (!e.persisted) return;
-      leaving = false;
-      pills.forEach((pill, i) => {
-        const label = pill.querySelector(".big");
-        if (label) label.textContent = originalLabels[i];
-        gsap.set(pill, { clearProps: "transform" });
-      });
-    };
-    window.addEventListener("pageshow", onPageShow);
-    cleanups.push(() => window.removeEventListener("pageshow", onPageShow));
-
-    return () => cleanups.forEach((fn) => fn());
-  }, []);
-
-  return (
-    <div ref={rootRef} id="hero-ctas" className="ctas">
-      <a className="pill primary" href={WALLET_URL}>
-        <span className="stack">
-          <span className="kicker">Personal</span>
-          <span className="big display">Open wallet</span>
-        </span>
-        <span className="arrow" aria-hidden="true">
-          →
-        </span>
-      </a>
-      <a className="pill secondary" href={CONSOLE_URL}>
-        <span className="stack">
-          <span className="kicker">Business</span>
-          <span className="big display">Open console</span>
-        </span>
-        <span className="arrow" aria-hidden="true">
-          →
-        </span>
-      </a>
-    </div>
-  );
-}

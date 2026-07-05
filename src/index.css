@@ -786,71 +786,144 @@ body {
   box-shadow: 0 34px 90px oklch(0.1 0.02 262 / 0.55);
 }
 
-/* ————— the doors (in flow, under the subtitle) ————— */
-.ctas {
+/* ————— the doors: two triangles, one square ————— */
+.doors {
   position: relative;
-  margin-top: 30px;
-  display: flex;
-  flex-direction: row;
-  gap: 12px;
+  margin-top: 32px;
+  width: clamp(164px, 15vw, 212px);
+  aspect-ratio: 1;
   pointer-events: auto;
+  will-change: transform;
 }
-.pill {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 18px;
+.tri {
+  position: absolute;
+  inset: 0;
+  display: block;
   text-decoration: none;
-  border-radius: 999px;
-  padding: 15px 26px;
-  transition:
-    box-shadow 0.25s ease,
-    background-color 0.25s ease;
+  color: var(--ink);
+  transition: clip-path 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: clip-path;
 }
-.pill .stack {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-}
-.pill .kicker {
-  font-size: 10px;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  font-weight: 700;
-  opacity: 0.75;
-}
-.pill .big {
-  font-size: 20px;
-  line-height: 1;
-  letter-spacing: -0.02em;
-}
-.pill .arrow {
-  font-size: 22px;
-  transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
-}
-.pill:hover .arrow {
-  transform: translateX(5px);
-}
-.pill:focus-visible {
+.tri:focus-visible {
   outline: 3px solid oklch(0.553 0.207 292 / 0.5);
   outline-offset: 2px;
 }
-.pill.primary {
-  /* luminous lavender: radial gradient color-dodged with noise, per the send-button reference */
+.tri-p {
   background:
     radial-gradient(129% 99% at 120% 81%, oklch(0.91 0.045 292) 26%, oklch(0.68 0.165 292) 100%),
     url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='0.55'/></svg>");
   background-blend-mode: color-dodge;
+  clip-path: polygon(0 0, calc(100% - 3px) 0, 0 calc(100% - 3px));
+}
+.tri-b {
+  background: var(--ink);
+  color: var(--cream);
+  clip-path: polygon(100% 3px, 100% 100%, 3px 100%);
+}
+/* hovering a triangle lets it claim more of the square — the seam slides */
+@media (pointer: fine) {
+  .doors:has(.tri-p:hover) .tri-p {
+    clip-path: polygon(0 0, 138% 0, 0 138%);
+    z-index: 2;
+  }
+  .doors:has(.tri-p:hover) .tri-b {
+    clip-path: polygon(100% 42%, 100% 100%, 42% 100%);
+  }
+  .doors:has(.tri-b:hover) .tri-b {
+    clip-path: polygon(100% -38%, 100% 100%, -38% 100%);
+    z-index: 2;
+  }
+  .doors:has(.tri-b:hover) .tri-p {
+    clip-path: polygon(0 0, 58% 0, 0 58%);
+  }
+}
+.t-label {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  transition: opacity 0.3s ease;
+}
+/* the squeezed door's label bows out instead of showing clipped words */
+@media (pointer: fine) {
+  .doors:has(.tri-p:hover) .tri-b .t-label,
+  .doors:has(.tri-b:hover) .tri-p .t-label {
+    opacity: 0;
+  }
+}
+.tri-p .t-label {
+  top: 16px;
+  left: 18px;
+}
+.tri-b .t-label {
+  bottom: 16px;
+  right: 18px;
+  text-align: right;
+  align-items: flex-end;
+}
+.t-word {
+  font-size: clamp(16px, 1.35vw, 20px);
+  line-height: 1;
+  letter-spacing: -0.01em;
+}
+.t-sub {
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-weight: 700;
+  opacity: 0.65;
+}
+
+/* the hover panel decrypts into the open sky, above the private balance */
+.door-panel {
+  position: fixed;
+  right: clamp(48px, 7vw, 130px);
+  top: 22vh;
+  width: min(400px, 30vw);
+  z-index: 25;
   color: var(--ink);
-  box-shadow: 0 18px 44px oklch(0.553 0.207 292 / 0.35);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
 }
-.pill.primary .kicker {
-  color: oklch(0.4 0.14 292);
-  opacity: 1;
+.dp-kicker {
+  margin: 0 0 4px;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--violet);
 }
-@media (pointer: coarse) {
-  .pill:hover {
-    transform: none;
+.dp-title {
+  margin: 0 0 16px;
+  font-size: clamp(26px, 2.4vw, 38px);
+  letter-spacing: -0.02em;
+}
+.dp-clip {
+  overflow: hidden;
+}
+.dp-row {
+  margin: 0 0 9px;
+  font-size: 15.5px;
+  font-weight: 600;
+  line-height: 1.45;
+}
+.dp-dash {
+  color: var(--violet);
+  margin-right: 10px;
+}
+@media (max-width: 1023px) {
+  .door-panel {
+    display: none;
+  }
+}
+@media (max-width: 639px) {
+  .doors {
+    position: fixed;
+    bottom: clamp(56px, 9vh, 96px);
+    left: calc(50% - 72px);
+    width: 144px;
+    margin: 0;
   }
 }
 .petal {
@@ -871,55 +944,6 @@ body {
   z-index: 60;
   display: none;
   pointer-events: none;
-}
-.pill.secondary {
-  color: var(--ink);
-  border: 1.5px solid oklch(0.29 0.028 252 / 0.5);
-  background: oklch(0.955 0.006 106 / 0.35);
-}
-.pill.secondary:hover {
-  background: oklch(0.955 0.006 106 / 0.6);
-}
-@media (max-width: 1023px) {
-  .pill {
-    padding: 13px 22px;
-  }
-  .pill .big {
-    font-size: 18px;
-  }
-}
-@media (max-width: 639px) {
-  /* mobile: one cute wallet door, pinned near the bottom, console rests */
-  .ctas {
-    position: fixed;
-    left: 24px;
-    right: 24px;
-    bottom: clamp(74px, 11vh, 108px);
-    margin: 0;
-    justify-content: center;
-  }
-  .pill.secondary {
-    display: none;
-  }
-  .ctas .pill.primary {
-    width: min(300px, 100%);
-    justify-content: center;
-    gap: 12px;
-    padding: 17px 28px;
-    box-shadow:
-      0 14px 36px oklch(0.553 0.207 292 / 0.45),
-      0 3px 10px oklch(0.553 0.207 292 / 0.3);
-  }
-  .ctas .pill.primary .stack {
-    align-items: center;
-    gap: 2px;
-  }
-  .ctas .pill.primary .kicker {
-    display: none;
-  }
-  .ctas .pill.primary .big {
-    font-size: 19px;
-  }
 }
 
 /* ————— site footer: the last slide ————— */

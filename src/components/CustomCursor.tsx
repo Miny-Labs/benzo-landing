@@ -17,7 +17,7 @@ export default function CustomCursor() {
     const onOver = (e: MouseEvent) => {
       const t = e.target as HTMLElement;
       el.classList.toggle("grow", !!t.closest("a, button, [data-cursor]"));
-      el.classList.toggle("solid", !!t.closest(".pill"));
+      el.classList.toggle("solid", !!t.closest(".tri"));
     };
     const onLeave = () => el.classList.remove("on");
 
