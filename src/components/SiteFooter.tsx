@@ -51,6 +51,9 @@ const SiteFooter = forwardRef<HTMLDivElement>(function SiteFooter(_p, ref) {
             </span>
             <span className="site-footer__word display">Benzo</span>
           </a>
+          <a className="avax-badge" href="https://www.avax.network" target="_blank" rel="noreferrer">
+            <img src="/avax/powered-by-avalanche-red.svg" alt="Powered by Avalanche" />
+          </a>
         </motion.div>
 
         <motion.div className="site-footer__legal" {...reveal(0.28)}>
@@ -61,9 +64,6 @@ const SiteFooter = forwardRef<HTMLDivElement>(function SiteFooter(_p, ref) {
           <span className="live">
             <span className="dot" /> Live on Avalanche Fuji testnet
           </span>
-          <a className="avax-badge" href="https://www.avax.network" target="_blank" rel="noreferrer">
-            <img src="/avax/powered-by-avalanche.svg" alt="Powered by Avalanche" />
-          </a>
         </motion.div>
       </div>
     </footer>

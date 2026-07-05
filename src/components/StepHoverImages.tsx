@@ -44,20 +44,26 @@ export default function StepHoverImages() {
       const startFollow = () => document.addEventListener("mousemove", align);
       const stopFollow = () => document.removeEventListener("mousemove", align);
       const fade = gsap.to(image, {
-        autoAlpha: 0.25,
+        autoAlpha: 1,
         ease: "none",
         paused: true,
         duration: 0.12,
         onReverseComplete: stopFollow,
       });
 
+      // while the still IS the cursor, the glyph cursor steps aside
+      const cursorEl = () => document.querySelector<HTMLElement>(".cursor");
       const onEnter = (e: MouseEvent) => {
         firstEnter = true;
         fade.play();
         startFollow();
         align(e);
+        cursorEl()?.classList.add("suppress");
       };
-      const onLeave = () => fade.reverse();
+      const onLeave = () => {
+        fade.reverse();
+        cursorEl()?.classList.remove("suppress");
+      };
 
       el.addEventListener("mouseenter", onEnter);
       el.addEventListener("mouseleave", onLeave);

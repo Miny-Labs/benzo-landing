@@ -751,15 +751,22 @@ body {
   }
 }
 
-/* powered-by badge in the footer legal row */
-.site-footer__legal .avax-badge img {
-  height: 24px;
-  width: auto;
+/* powered-by badge: sits under the huge wordmark, at its scale, in avax red */
+.site-footer__brand-row {
+  flex-wrap: wrap;
+}
+.site-footer__brand-row .avax-badge {
+  flex: 1 0 100%;
+  margin-top: clamp(14px, 2vh, 28px);
+}
+.site-footer__brand-row .avax-badge img {
   display: block;
-  opacity: 0.75;
+  width: min(540px, 68vw);
+  height: auto;
+  opacity: 0.92;
   transition: opacity 180ms ease;
 }
-.site-footer__legal .avax-badge:hover img {
+.site-footer__brand-row .avax-badge:hover img {
   opacity: 1;
 }
 
@@ -1171,6 +1178,10 @@ body {
 }
 .cursor.grow svg {
   transform: scale(1.35);
+}
+/* the hover still takes over as cursor on the stage scenes */
+.cursor.suppress {
+  opacity: 0 !important;
 }
 /* over the footer pills exclusion would land on olive — go solid cream */
 .cursor.solid {
