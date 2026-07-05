@@ -371,6 +371,12 @@ body {
 .scene-send {
   height: 320vh;
 }
+/* phones give the send film three screens' worth of scrub room */
+@media (max-width: 639px) and (prefers-reduced-motion: no-preference) {
+  .scene-send {
+    height: 520vh;
+  }
+}
 .scene-statement {
   height: 170vh;
 }
@@ -549,6 +555,50 @@ body {
   .stage-verb {
     letter-spacing: -0.03em;
   }
+}
+
+/* phones: the three stages fold into one screen */
+.scene-stepstack {
+  height: 135vh;
+}
+.steps-stack {
+  width: 100%;
+  padding: 0 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 30px;
+  color: var(--cream);
+}
+.steps-stack .stage-eyebrow {
+  margin-bottom: 2px;
+}
+.stack-row {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+}
+.stack-num {
+  font-size: 11px;
+  letter-spacing: 0.34em;
+  font-weight: 700;
+  color: oklch(0.68 0.15 292);
+}
+.stack-verb {
+  margin: 0;
+  font-size: clamp(28px, 8.4vw, 38px);
+  line-height: 1.02;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+}
+.stack-sub {
+  margin: 0;
+  max-width: 42ch;
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--panel-soft);
 }
 
 /* ————— the private send demo (sent over Avalanche) ————— */
@@ -767,6 +817,74 @@ body {
   .packet-cipher {
     font-size: 12px;
     letter-spacing: 1.8px;
+  }
+
+  /* film mode: sender, network, receiver each own the screen, crossfaded
+     by scroll (the JS drives opacity/transform on the three views) */
+  .psend--film .psend-stage {
+    display: block;
+    position: relative;
+    height: 58vh;
+  }
+  .psend--film .pcard,
+  .psend--film .prail {
+    position: absolute;
+    inset: 0;
+    margin: auto;
+    height: fit-content;
+    opacity: 0;
+  }
+  .psend--film .pcard {
+    width: min(100%, 400px);
+    padding: 30px 26px;
+    border-radius: 22px;
+    gap: 6px;
+  }
+  .psend--film .pcard .pname {
+    font-size: 12.5px;
+  }
+  .psend--film .pcard .pbal {
+    font-size: 46px;
+  }
+  .psend--film .pcard .paddr {
+    font-size: 12.5px;
+  }
+  .psend--film .psending {
+    font-size: 14.5px;
+    margin-top: 10px;
+  }
+  .psend--film .pplus {
+    font-size: 24px;
+    margin-top: 8px;
+  }
+  .psend--film .ppriv {
+    font-size: 13px;
+  }
+  .psend--film .prail {
+    width: fit-content;
+  }
+  .psend--film .rail-track {
+    width: 56px;
+    height: min(300px, 34vh);
+  }
+  .psend--film .rail-logo {
+    height: 22px;
+  }
+  .psend--film .packet {
+    width: 46px;
+    height: 32px;
+    border-radius: 9px;
+    left: calc(50% - 23px);
+  }
+  .psend--film .packet-face {
+    font-size: 12.5px;
+  }
+  .psend--film .rail-caption {
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    margin-top: 14px;
+    text-align: center;
   }
 }
 @media (prefers-reduced-motion: reduce) {

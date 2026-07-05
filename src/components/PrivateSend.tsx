@@ -96,7 +96,27 @@ export default function PrivateSend() {
     let tl: gsap.core.Timeline | null = null;
     let scrambleAt = 0;
 
+    // film mode: on phones each act gets its own screen — sender, network,
+    // receiver — crossfaded by the same scrubbed timeline
+    const vYou = q(".pcard-you")[0] as HTMLElement;
+    const vRail = q(".prail")[0] as HTMLElement;
+    const vMaria = q(".pcard-maria")[0] as HTMLElement;
+    const XFADE = 0.25; // crossfade width, in timeline seconds
+    let film = false;
+    const setView = (el: HTMLElement, enter: number, exit: number) => {
+      el.style.opacity = String(Math.min(enter, 1 - exit));
+      el.style.transform = `translateY(${((1 - enter) * 28 - exit * 28).toFixed(1)}px)`;
+    };
+
     const build = () => {
+      film = mobile.matches;
+      root.classList.toggle("psend--film", film);
+      if (!film) {
+        for (const el of [vYou, vRail, vMaria]) {
+          el.style.removeProperty("opacity");
+          el.style.removeProperty("transform");
+        }
+      }
       tl?.kill();
       gsap.set(packet, { x: 0, y: 0, scale: 0, opacity: 1, clearProps: "backgroundColor" });
       gsap.set(note, { opacity: 1 });
@@ -143,8 +163,19 @@ export default function PrivateSend() {
 
       const t = tl.time();
       const L = tl.labels;
-      const senderClear = t < L.flightStart;
+      // in film mode the sender encrypts as its screen starts to hand off,
+      // so the scramble is still on screen when the money departs
+      const senderClear = t < L.flightStart - (film ? XFADE : 0);
       const receiverClear = t >= L.reveal && t < L.sealBack;
+
+      if (film) {
+        const ramp = (a: number, b: number) => Math.max(0, Math.min(1, (t - a) / (b - a)));
+        const hand1 = ramp(L.flightStart - XFADE, L.flightStart);
+        const hand2 = ramp(L.flightEnd, L.flightEnd + XFADE);
+        setView(vYou, 1, hand1);
+        setView(vRail, hand1, hand2);
+        setView(vMaria, hand2, 0);
+      }
 
       apply(yBal, senderClear ? "$8,214" : MASK_BAL);
       apply(yAddr, senderClear ? Y_ADDR : MASK_ADDR);
@@ -189,7 +220,7 @@ export default function PrivateSend() {
       <h2 className="psend-title display">Watch a send stay private.</h2>
 
       <div className="psend-stage">
-        <div className="pcard">
+        <div className="pcard pcard-you">
           <span className="pname">You</span>
           <span className="pbal display tnum ps-ybal">$8,214</span>
           <span className="paddr tnum ps-yaddr">{Y_ADDR}</span>
@@ -220,7 +251,7 @@ export default function PrivateSend() {
           </div>
         </div>
 
-        <div className="pcard">
+        <div className="pcard pcard-maria">
           <span className="pname">@maria</span>
           <span className="pbal display tnum ps-rbal">{MASK_BAL}</span>
           <span className="paddr tnum ps-raddr">{MASK_ADDR}</span>

@@ -70,6 +70,9 @@ const STEPS = [
 const GalleryPanel = forwardRef<HTMLDivElement, Props>(function GalleryPanel({ wrapRef }, panelRef) {
   const cols = useSyncExternalStore(subscribeCols, getCols, () => 4);
   const cells = useMemo(() => buildLayout(GALLERY_IMAGES.length, cols), [cols]);
+  // On phones the three stage scenes collapse into one screen — full-bleed
+  // ghost numerals don't earn three viewports of scroll on a 400px canvas.
+  const phone = cols === 2;
 
   return (
     <div ref={panelRef} className="vault" role="region" aria-label="What stays private">
@@ -110,26 +113,47 @@ const GalleryPanel = forwardRef<HTMLDivElement, Props>(function GalleryPanel({ w
           })}
         </div>
 
-        {STEPS.map((s, i) => (
-          <section key={s.num} className="scene scene-stage">
+        {phone ? (
+          <section className="scene scene-stepstack">
             <div className="scene-pin">
-              <div className="stage-step step">
-                {i === 0 && (
-                  <div className="vault-intro stage-eyebrow">
-                    <span className="rule" />
-                    <span className="line">Private, yet provable</span>
-                    <span className="rule" />
+              <div className="steps-stack">
+                <div className="vault-intro stage-eyebrow">
+                  <span className="rule" />
+                  <span className="line">Private, yet provable</span>
+                  <span className="rule" />
+                </div>
+                {STEPS.map((s) => (
+                  <div className="stack-row" key={s.num}>
+                    <span className="stack-num tnum">{s.num}</span>
+                    <h2 className="stack-verb display">{s.verb}</h2>
+                    <p className="stack-sub">{s.sub}</p>
                   </div>
-                )}
-                <span className="ghost display" aria-hidden="true">
-                  {s.num}
-                </span>
-                <h2 className="stage-verb display">{s.verb}</h2>
-                <p className="stage-sub">{s.sub}</p>
+                ))}
               </div>
             </div>
           </section>
-        ))}
+        ) : (
+          STEPS.map((s, i) => (
+            <section key={s.num} className="scene scene-stage">
+              <div className="scene-pin">
+                <div className="stage-step step">
+                  {i === 0 && (
+                    <div className="vault-intro stage-eyebrow">
+                      <span className="rule" />
+                      <span className="line">Private, yet provable</span>
+                      <span className="rule" />
+                    </div>
+                  )}
+                  <span className="ghost display" aria-hidden="true">
+                    {s.num}
+                  </span>
+                  <h2 className="stage-verb display">{s.verb}</h2>
+                  <p className="stage-sub">{s.sub}</p>
+                </div>
+              </div>
+            </section>
+          ))
+        )}
       </div>
     </div>
   );
