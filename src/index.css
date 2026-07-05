@@ -581,6 +581,9 @@ body {
   flex-direction: column;
   align-items: center;
   gap: 14px;
+  /* the caption below skews the group's center; shift so the TRACK centers
+     against the cards, not the track+caption combo */
+  transform: translateY(15px);
 }
 .rail-track {
   position: relative;
@@ -617,17 +620,17 @@ body {
 }
 .packet {
   position: absolute;
-  left: 10px;
-  top: calc(50% - 20px);
-  width: 58px;
-  height: 40px;
-  border-radius: 10px;
+  left: 28px;
+  top: calc(50% - 18px);
+  width: 54px;
+  height: 36px;
+  border-radius: 9px;
   background: var(--cream);
   color: var(--ink);
   display: grid;
   place-items: center;
   font-weight: 800;
-  box-shadow: 0 6px 18px rgb(0 0 0 / 0.3);
+  box-shadow: 0 4px 14px rgb(0 0 0 / 0.24);
   transform: scale(0);
 }
 .packet-face {
@@ -635,7 +638,10 @@ body {
   font-size: 13px;
 }
 .packet-cipher {
-  letter-spacing: 1.5px;
+  color: var(--cream);
+  font-size: 15px;
+  letter-spacing: 2.5px;
+  padding-left: 2.5px; /* optically recenter the tracked dots */
   opacity: 0;
 }
 .rail-caption {
@@ -686,8 +692,8 @@ body {
     height: 24px;
   }
   .packet {
-    left: calc(50% - 29px);
-    top: 10px;
+    left: calc(50% - 27px);
+    top: 28px;
   }
 }
 @media (prefers-reduced-motion: reduce) {

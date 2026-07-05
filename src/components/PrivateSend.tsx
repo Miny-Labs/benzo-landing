@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 
-const GLYPHS = "█▓▒░0123456789abcdef";
+const GLYPHS = "0123456789abcdef";
 const BASE = 1067;
 const AMOUNT = 120;
 const fmt = (v: number) => `$${Math.round(v).toLocaleString("en-US")}`;
@@ -35,7 +35,7 @@ export default function PrivateSend() {
       plus.style.opacity = "1";
       receipt.style.opacity = "1";
       rbal.textContent = fmt(BASE + AMOUNT);
-      netcap.textContent = "0x▓▓▓▓▓▓▓▓";
+      netcap.textContent = "0x••••••••";
       return;
     }
 
@@ -45,7 +45,7 @@ export default function PrivateSend() {
     let inFlight = false;
 
     const reset = () => {
-      gsap.set(packet, { x: 0, y: 0, scale: 0, opacity: 1 });
+      gsap.set(packet, { x: 0, y: 0, scale: 0, opacity: 1, clearProps: "backgroundColor" });
       gsap.set(note, { opacity: 1 });
       gsap.set(cipherFace, { opacity: 0 });
       gsap.set([plus, receipt], { opacity: 0, y: 6 });
@@ -59,7 +59,11 @@ export default function PrivateSend() {
       tl?.kill();
       reset();
       const vertical = mobile.matches;
-      const dist = vertical ? track.clientHeight - packet.offsetHeight - 20 : track.clientWidth - packet.offsetWidth - 20;
+      // keep the packet inside the pill's straight section, clear of the caps
+      const PAD = 28;
+      const dist = vertical
+        ? track.clientHeight - packet.offsetHeight - PAD * 2
+        : track.clientWidth - packet.offsetWidth - PAD * 2;
       const travel = vertical ? { y: dist } : { x: dist };
       const bal = { v: BASE };
 
@@ -87,12 +91,13 @@ export default function PrivateSend() {
         .add(() => {
           inFlight = true;
         }, "+=0.3")
-        .to(note, { opacity: 0, duration: 0.16 }, "<")
-        .to(cipherFace, { opacity: 1, duration: 0.16 }, "<")
+        .to(note, { opacity: 0, duration: 0.2 }, "<")
+        .to(cipherFace, { opacity: 1, duration: 0.2 }, "<")
+        .to(packet, { backgroundColor: "#1a2135", duration: 0.25 }, "<")
         .to(packet, { ...travel, duration: 1.7, ease: "power1.inOut" }, "<")
         .add(() => {
           inFlight = false;
-          netcap.textContent = "0x▓▓▓▓▓▓▓▓";
+          netcap.textContent = "0x••••••••";
         })
         .to(packet, { scale: 0, opacity: 0, duration: 0.3, ease: "power2.in" })
         .to(plus, { opacity: 1, y: 0, duration: 0.45, ease: "power3.out" }, "<+=0.1")
@@ -164,7 +169,7 @@ export default function PrivateSend() {
             </svg>
             <div className="packet">
               <span className="packet-face packet-note tnum">$120</span>
-              <span className="packet-face packet-cipher">▓▒█▓</span>
+              <span className="packet-face packet-cipher">••••</span>
             </div>
           </div>
           <div className="rail-caption">
