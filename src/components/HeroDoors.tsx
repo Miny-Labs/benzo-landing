@@ -156,18 +156,20 @@ export default function HeroDoors() {
   return (
     <>
       <div ref={rootRef} id="hero-ctas" className="doors" onMouseLeave={leave}>
-        <a className="tri tri-p" href={WALLET_URL} onMouseEnter={enter("personal")} aria-label="Personal — open the wallet">
-          <span className="t-label">
-            <span className="t-word display">Personal</span>
-            <span className="t-sub">The wallet ↗</span>
-          </span>
-        </a>
-        <a className="tri tri-b" href={CONSOLE_URL} onMouseEnter={enter("business")} aria-label="Business — open the console">
-          <span className="t-label">
-            <span className="t-word display">Business</span>
-            <span className="t-sub">The console ↗</span>
-          </span>
-        </a>
+        <div className="doors-card">
+          <a className="tri tri-p" href={WALLET_URL} onMouseEnter={enter("personal")} aria-label="Personal — open the wallet">
+            <span className="t-label">
+              <span className="t-word display">Personal</span>
+              <span className="t-sub">The wallet ↗</span>
+            </span>
+          </a>
+          <a className="tri tri-b" href={CONSOLE_URL} onMouseEnter={enter("business")} aria-label="Business — open the console">
+            <span className="t-label">
+              <span className="t-word display">Business</span>
+              <span className="t-sub">The console ↗</span>
+            </span>
+          </a>
+        </div>
       </div>
 
       <div ref={panelRef} className="door-panel" aria-hidden={!active}>
