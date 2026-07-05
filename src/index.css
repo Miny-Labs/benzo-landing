@@ -818,6 +818,9 @@ body {
 
   /* film mode: sender, network, receiver each own the screen, crossfaded
      by scroll (the JS drives opacity/transform on the three views) */
+  .psend--film .psend-eyebrow {
+    display: none;
+  }
   .psend--film .psend-stage {
     display: block;
     position: relative;

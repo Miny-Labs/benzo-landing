@@ -101,7 +101,7 @@ export default function PrivateSend() {
     const vYou = q(".pcard-you")[0] as HTMLElement;
     const vRail = q(".prail")[0] as HTMLElement;
     const vMaria = q(".pcard-maria")[0] as HTMLElement;
-    const XFADE = 0.25; // crossfade width, in timeline seconds
+    const XFADE = 0.15; // handoff fade width, in timeline seconds
     let film = false;
     const setView = (el: HTMLElement, enter: number, exit: number) => {
       el.style.opacity = String(Math.min(enter, 1 - exit));
@@ -165,16 +165,16 @@ export default function PrivateSend() {
       const L = tl.labels;
       // in film mode the sender encrypts as its screen starts to hand off,
       // so the scramble is still on screen when the money departs
-      const senderClear = t < L.flightStart - (film ? XFADE : 0);
+      const senderClear = t < L.flightStart - (film ? 2 * XFADE : 0);
       const receiverClear = t >= L.reveal && t < L.sealBack;
 
       if (film) {
+        // sequential fades, never a cross-dissolve: the scrub can park at any
+        // point, and two half-faded screens stacked up read as a glitch
         const ramp = (a: number, b: number) => Math.max(0, Math.min(1, (t - a) / (b - a)));
-        const hand1 = ramp(L.flightStart - XFADE, L.flightStart);
-        const hand2 = ramp(L.flightEnd, L.flightEnd + XFADE);
-        setView(vYou, 1, hand1);
-        setView(vRail, hand1, hand2);
-        setView(vMaria, hand2, 0);
+        setView(vYou, 1, ramp(L.flightStart - 2 * XFADE, L.flightStart - XFADE));
+        setView(vRail, ramp(L.flightStart - XFADE, L.flightStart), ramp(L.flightEnd, L.flightEnd + XFADE));
+        setView(vMaria, ramp(L.flightEnd + XFADE, L.reveal), 0);
       }
 
       apply(yBal, senderClear ? "$8,214" : MASK_BAL);
