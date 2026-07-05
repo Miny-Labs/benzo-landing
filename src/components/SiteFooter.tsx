@@ -47,19 +47,17 @@ const SiteFooter = forwardRef<HTMLDivElement>(function SiteFooter(_p, ref) {
         </div>
 
         <motion.div className="site-footer__brand-row" {...reveal(0.15)}>
-          <div className="site-footer__brand-col">
-            <a className="site-footer__brand" href="/" aria-label="Benzo home">
-              <span className="site-footer__mark" aria-hidden="true">
-                <svg viewBox="0 0 256 256">
-                  <path d={GLYPH_PATH} />
-                </svg>
-              </span>
-              <span className="site-footer__word display">Benzo</span>
-            </a>
-            <a className="avax-badge" href="https://www.avax.network" target="_blank" rel="noreferrer">
-              <img src="/avax/powered-by-avalanche-red.svg" alt="Powered by Avalanche" />
-            </a>
-          </div>
+          <a className="site-footer__brand" href="/" aria-label="Benzo home">
+            <span className="site-footer__mark" aria-hidden="true">
+              <svg viewBox="0 0 256 256">
+                <path d={GLYPH_PATH} />
+              </svg>
+            </span>
+            <span className="site-footer__word display">Benzo</span>
+          </a>
+          <a className="avax-badge" href="https://www.avax.network" target="_blank" rel="noreferrer">
+            <img src="/avax/powered-by-avalanche-red.svg" alt="Powered by Avalanche" />
+          </a>
         </motion.div>
 
         <motion.div className="site-footer__legal" {...reveal(0.28)}>
