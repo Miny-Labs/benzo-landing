@@ -110,26 +110,26 @@ const GalleryPanel = forwardRef<HTMLDivElement, Props>(function GalleryPanel({ w
           })}
         </div>
 
-        <section className="scene scene-how">
-          <div className="scene-pin">
-            <div className="vault-how">
-              <div className="vault-intro how-eyebrow">
-                <span className="rule" />
-                <span className="line">Private, yet provable</span>
-                <span className="rule" />
-              </div>
-              {STEPS.map((s, i) => (
-                <div key={s.num} className={`step step-${i + 1}`}>
-                  <span className="num">{s.num}</span>
-                  <div>
-                    <h2 className="verb display">{s.verb}</h2>
-                    <p className="how-sub">{s.sub}</p>
+        {STEPS.map((s, i) => (
+          <section key={s.num} className="scene scene-stage">
+            <div className="scene-pin">
+              <div className="stage-step step">
+                {i === 0 && (
+                  <div className="vault-intro stage-eyebrow">
+                    <span className="rule" />
+                    <span className="line">Private, yet provable</span>
+                    <span className="rule" />
                   </div>
-                </div>
-              ))}
+                )}
+                <span className="ghost display" aria-hidden="true">
+                  {s.num}
+                </span>
+                <h2 className="stage-verb display">{s.verb}</h2>
+                <p className="stage-sub">{s.sub}</p>
+              </div>
             </div>
-          </div>
-        </section>
+          </section>
+        ))}
       </div>
     </div>
   );

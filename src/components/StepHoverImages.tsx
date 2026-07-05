@@ -19,7 +19,7 @@ export default function StepHoverImages() {
     if (!fine || reduced) return;
 
     const root = rootRef.current!;
-    const steps = Array.from(document.querySelectorAll<HTMLElement>(".vault-how .step"));
+    const steps = Array.from(document.querySelectorAll<HTMLElement>(".stage-step"));
     const cleanups: Array<() => void> = [];
 
     steps.forEach((el, i) => {
@@ -44,7 +44,7 @@ export default function StepHoverImages() {
       const startFollow = () => document.addEventListener("mousemove", align);
       const stopFollow = () => document.removeEventListener("mousemove", align);
       const fade = gsap.to(image, {
-        autoAlpha: 1,
+        autoAlpha: 0.25,
         ease: "none",
         paused: true,
         duration: 0.12,

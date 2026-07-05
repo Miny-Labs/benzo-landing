@@ -3,73 +3,23 @@ import gsap from "gsap";
 
 const HEX = "0123456789abcdef";
 const SCRAMBLE = "█▓▒░•§#%¤";
-const MASK = "$•••••";
-const IDLE_CAPTION = "· · · · · · · ·";
-const DONE_CAPTION = "0x••••••••";
+const MASK_BAL = "$•••••";
+const MASK_ADDR = "0x••••…••••";
+const MASK_TX = "0x••••••••";
+const IDLE_TX = "· · · · · · · ·";
+const Y_ADDR = "0x8f4a…31c9";
+const R_ADDR = "0x2d7e…a844";
+const TX_ID = "0x7d29…49da";
 const BASE = 1067;
 const AMOUNT = 120;
 const fmt = (v: number) => `$${Math.round(v).toLocaleString("en-US")}`;
 
-/** Masked amount: shows bullets, scrambles to the real value on hover/tap. */
-function maskable(el: HTMLElement, getValue: () => string, reduced: boolean) {
-  let timer: number | null = null;
-  let shown = false;
-  const scrambleTo = (target: string) => {
-    if (reduced) {
-      el.textContent = target;
-      return;
-    }
-    if (timer) window.clearInterval(timer);
-    let frame = 0;
-    const total = 12;
-    timer = window.setInterval(() => {
-      frame++;
-      const resolved = Math.floor((frame / total) * target.length);
-      let out = "";
-      for (let i = 0; i < target.length; i++) {
-        out += i < resolved ? target[i] : SCRAMBLE[(Math.random() * SCRAMBLE.length) | 0];
-      }
-      el.textContent = out;
-      if (frame >= total && timer) {
-        window.clearInterval(timer);
-        timer = null;
-        el.textContent = target;
-      }
-    }, 40);
-  };
-  const reveal = () => {
-    shown = true;
-    scrambleTo(getValue());
-  };
-  const hide = () => {
-    shown = false;
-    scrambleTo(MASK);
-  };
-  const toggle = () => (shown ? hide() : reveal());
-  el.textContent = MASK;
-  el.addEventListener("mouseenter", reveal);
-  el.addEventListener("mouseleave", hide);
-  el.addEventListener("touchstart", toggle, { passive: true });
-  return {
-    refresh: () => {
-      if (shown && !timer) el.textContent = getValue();
-    },
-    detach: () => {
-      if (timer) window.clearInterval(timer);
-      el.removeEventListener("mouseenter", reveal);
-      el.removeEventListener("mouseleave", hide);
-      el.removeEventListener("touchstart", toggle);
-    },
-  };
-}
-
 /**
- * Scroll-scrubbed demo of a private send. The surrounding .scene drives a
- * --sp progress custom property (set by the scroll engine); this component
- * maps it onto a paused GSAP timeline, so the payment seals, crosses the
- * Avalanche rail as a ciphered packet, and lands on @maria's card exactly
- * in step with the visitor's scroll — forward and backward. Both balances
- * stay masked; hover or tap de-scrambles them.
+ * Scroll-scrubbed private send where encryption is the choreography:
+ * the sender starts in the clear and ENCRYPTS the moment the packet departs;
+ * the receiver DECRYPTS on arrival (balance counts up, address shows, tx id
+ * resolves) and seals back to ciphertext at the end. All of it maps onto the
+ * scene's --sp scroll progress, so it runs forward and backward.
  */
 export default function PrivateSend() {
   const rootRef = useRef<HTMLDivElement>(null);
@@ -85,26 +35,61 @@ export default function PrivateSend() {
     const netcap = q(".rail-cipher")[0] as HTMLElement;
     const sendline = q(".psending")[0] as HTMLElement;
     const plus = q(".pplus")[0] as HTMLElement;
-    const yourBal = q(".ps-ybal")[0] as HTMLElement;
-    const mariaBal = q(".ps-rbal")[0] as HTMLElement;
+    const yBal = q(".ps-ybal")[0] as HTMLElement;
+    const yAddr = q(".ps-yaddr")[0] as HTMLElement;
+    const rBal = q(".ps-rbal")[0] as HTMLElement;
+    const rAddr = q(".ps-raddr")[0] as HTMLElement;
     const receipt = q(".ppriv")[0] as HTMLElement;
 
     const state = { bal: BASE };
-    const yourMask = maskable(yourBal, () => "$8,214", reduced);
-    const mariaMask = maskable(mariaBal, () => fmt(state.bal), reduced);
 
     if (reduced) {
       packet.style.display = "none";
       sendline.style.opacity = "1";
       plus.style.opacity = "1";
       receipt.style.opacity = "1";
-      state.bal = BASE + AMOUNT;
-      netcap.textContent = DONE_CAPTION;
-      return () => {
-        yourMask.detach();
-        mariaMask.detach();
-      };
+      yBal.textContent = "$8,214";
+      yAddr.textContent = Y_ADDR;
+      rBal.textContent = fmt(BASE + AMOUNT);
+      rAddr.textContent = R_ADDR;
+      netcap.textContent = TX_ID;
+      return;
     }
+
+    // — encrypt/decrypt text driver: scrambles whenever the target flips —
+    const timers = new Map<HTMLElement, number>();
+    const current = new Map<HTMLElement, string>();
+    const scrambleTo = (el: HTMLElement, target: string) => {
+      const old = timers.get(el);
+      if (old) window.clearInterval(old);
+      let frame = 0;
+      const total = 11;
+      const id = window.setInterval(() => {
+        frame++;
+        const resolved = Math.floor((frame / total) * target.length);
+        let out = "";
+        for (let i = 0; i < target.length; i++) {
+          out += i < resolved ? target[i] : SCRAMBLE[(Math.random() * SCRAMBLE.length) | 0];
+        }
+        el.textContent = out;
+        if (frame >= total) {
+          window.clearInterval(id);
+          timers.delete(el);
+          el.textContent = target;
+        }
+      }, 38);
+      timers.set(el, id);
+    };
+    const apply = (el: HTMLElement, target: string, live = false) => {
+      const prev = current.get(el);
+      if (prev === target) {
+        // live values (the counting balance) update in place while decrypted
+        if (live && !timers.has(el)) el.textContent = target;
+        return;
+      }
+      current.set(el, target);
+      scrambleTo(el, target);
+    };
 
     const mobile = window.matchMedia("(max-width: 639px)");
     const scene = root.closest<HTMLElement>(".scene");
@@ -116,8 +101,8 @@ export default function PrivateSend() {
       gsap.set(packet, { x: 0, y: 0, scale: 0, opacity: 1, clearProps: "backgroundColor" });
       gsap.set(note, { opacity: 1 });
       gsap.set(cipherFace, { opacity: 0 });
-      gsap.set([plus, receipt, sendline], { opacity: 0, y: 6 });
-      gsap.set(sendline, { y: 0 });
+      gsap.set([plus, receipt], { opacity: 0, y: 6 });
+      gsap.set(sendline, { opacity: 0 });
 
       const vertical = mobile.matches;
       const PAD = 28;
@@ -137,21 +122,19 @@ export default function PrivateSend() {
         .to(packet, { ...travel, duration: 1.7, ease: "power1.inOut" }, "flightStart")
         .addLabel("flightEnd")
         .to(packet, { scale: 0, opacity: 0, duration: 0.3, ease: "power2.in" })
+        .addLabel("reveal")
         .to(plus, { opacity: 1, y: 0, duration: 0.45, ease: "power3.out" }, "<+=0.1")
-        .to(state, {
-          bal: BASE + AMOUNT,
-          duration: 0.6,
-          ease: "power2.out",
-          onUpdate: () => mariaMask.refresh(),
-        }, "<")
+        .to(state, { bal: BASE + AMOUNT, duration: 0.6, ease: "power2.out" }, "<")
         .to(receipt, { opacity: 1, y: 0, duration: 0.4 }, "-=0.2")
-        .to({}, { duration: 0.35 }); // settle
+        .to({}, { duration: 0.55 }) // dwell while decrypted
+        .addLabel("sealBack")
+        .to(plus, { opacity: 0, duration: 0.35 }, "sealBack")
+        .to({}, { duration: 0.45 }); // tail
       return tl;
     };
 
     build();
 
-    // scrub: the scroll engine writes --sp (0..1) on the scene while pinned
     const update = () => {
       if (!tl || !scene) return;
       const sp = parseFloat(scene.style.getPropertyValue("--sp") || "0");
@@ -159,9 +142,16 @@ export default function PrivateSend() {
       tl.progress(p, false);
 
       const t = tl.time();
-      const start = tl.labels.flightStart ?? 0;
-      const end = tl.labels.flightEnd ?? 0;
-      if (t > start && t < end) {
+      const L = tl.labels;
+      const senderClear = t < L.flightStart;
+      const receiverClear = t >= L.reveal && t < L.sealBack;
+
+      apply(yBal, senderClear ? "$8,214" : MASK_BAL);
+      apply(yAddr, senderClear ? Y_ADDR : MASK_ADDR);
+      apply(rBal, receiverClear ? fmt(state.bal) : MASK_BAL, true);
+      apply(rAddr, receiverClear ? R_ADDR : MASK_ADDR);
+
+      if (t > L.flightStart && t < L.flightEnd) {
         const now = performance.now();
         if (now - scrambleAt > 70) {
           scrambleAt = now;
@@ -169,8 +159,11 @@ export default function PrivateSend() {
           for (let i = 0; i < 8; i++) s += HEX[(Math.random() * HEX.length) | 0];
           netcap.textContent = s;
         }
+        current.set(netcap, "");
+      } else if (t <= L.flightStart) {
+        apply(netcap, IDLE_TX);
       } else {
-        netcap.textContent = t >= end ? DONE_CAPTION : IDLE_CAPTION;
+        apply(netcap, receiverClear ? TX_ID : MASK_TX);
       }
     };
     gsap.ticker.add(update);
@@ -182,8 +175,7 @@ export default function PrivateSend() {
       gsap.ticker.remove(update);
       mobile.removeEventListener("change", onBreak);
       tl?.kill();
-      yourMask.detach();
-      mariaMask.detach();
+      timers.forEach((id) => window.clearInterval(id));
     };
   }, []);
 
@@ -199,7 +191,8 @@ export default function PrivateSend() {
       <div className="psend-stage">
         <div className="pcard">
           <span className="pname">You</span>
-          <span className="pbal display tnum ps-ybal" data-cursor title="Hover to reveal" />
+          <span className="pbal display tnum ps-ybal">$8,214</span>
+          <span className="paddr tnum ps-yaddr">{Y_ADDR}</span>
           <span className="psending">
             Sending <b>$120</b> to @maria
           </span>
@@ -223,13 +216,14 @@ export default function PrivateSend() {
             </div>
           </div>
           <div className="rail-caption">
-            What the network sees <span className="rail-cipher tnum">{IDLE_CAPTION}</span>
+            What the network sees <span className="rail-cipher tnum">{IDLE_TX}</span>
           </div>
         </div>
 
         <div className="pcard">
           <span className="pname">@maria</span>
-          <span className="pbal display tnum ps-rbal" data-cursor title="Hover to reveal" />
+          <span className="pbal display tnum ps-rbal">{MASK_BAL}</span>
+          <span className="paddr tnum ps-raddr">{MASK_ADDR}</span>
           <span className="pplus display tnum">+$120</span>
           <span className="ppriv">✓ Private receipt saved</span>
         </div>
