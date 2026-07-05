@@ -786,12 +786,12 @@ body {
   box-shadow: 0 34px 90px oklch(0.1 0.02 262 / 0.55);
 }
 
-/* ————— the doors: two triangles, one square ————— */
+/* ————— the doors: two triangles, one wide rectangle ————— */
 .doors {
   position: relative;
   margin-top: 32px;
-  width: clamp(164px, 15vw, 212px);
-  aspect-ratio: 1;
+  width: min(480px, 36vw);
+  height: clamp(150px, 13vw, 196px);
   pointer-events: auto;
   will-change: transform;
 }
@@ -857,9 +857,13 @@ body {
 }
 .tri-b .t-label {
   bottom: 16px;
-  right: 18px;
+  right: 20px;
   text-align: right;
   align-items: flex-end;
+}
+.tri-p .t-label {
+  top: 18px;
+  left: 22px;
 }
 .t-word {
   font-size: clamp(16px, 1.35vw, 20px);
@@ -921,8 +925,10 @@ body {
   .doors {
     position: fixed;
     bottom: clamp(56px, 9vh, 96px);
-    left: calc(50% - 72px);
-    width: 144px;
+    left: 24px;
+    right: 24px;
+    width: auto;
+    height: 128px;
     margin: 0;
   }
 }
@@ -1030,21 +1036,23 @@ body {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: clamp(12px, 1.3vw, 20px);
+  gap: clamp(18px, 2.6vh, 34px);
   padding-top: 10px;
 }
 .site-footer__nav a {
   color: oklch(0.965 0.007 106 / 0.88);
-  font-size: 15px;
-  font-weight: 600;
-  line-height: 1.1;
+  font-family: "Hanken Grotesk", ui-sans-serif, system-ui, sans-serif;
+  font-weight: 800;
+  font-size: clamp(24px, 2.3vw, 38px);
+  letter-spacing: -0.02em;
+  line-height: 1;
   transition:
     color 180ms ease,
     transform 180ms ease;
 }
 .site-footer__nav a:hover {
   color: var(--cream);
-  transform: translateX(3px);
+  transform: translateX(6px);
 }
 
 .site-footer__brand-row {
