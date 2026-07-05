@@ -1,4 +1,5 @@
 import { useRef } from "react";
+import { MotionConfig } from "motion/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
@@ -184,7 +185,8 @@ export default function App() {
 
   return (
     <div id="scroll-spacer" ref={spacerRef} style={{ height: "500vh" }}>
-      <main>
+      <MotionConfig reducedMotion="user">
+        <main>
         <h1 className="sr-only">Benzo: private USDC payments on Avalanche</h1>
         <VideoStage ref={stageRef} />
         <GalleryPanel ref={panelRef} wrapRef={wrapRef} />
@@ -194,8 +196,9 @@ export default function App() {
         <HeaderNav />
         <HeroBlock />
         <BalanceInfo ref={infoRef} symbolRef={symbolRef} />
-        <ScrollHint />
-      </main>
+          <ScrollHint />
+        </main>
+      </MotionConfig>
       <CustomCursor />
       <TransitionWave />
     </div>

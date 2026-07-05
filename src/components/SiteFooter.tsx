@@ -1,5 +1,7 @@
 import { forwardRef } from "react";
+import { motion } from "motion/react";
 import { CONSOLE_URL, EXPLORER_URL, GLYPH_PATH, SOCIALS, WALLET_URL } from "../lib/config";
+import { reveal } from "../lib/reveal";
 
 /**
  * The last slide: a full-viewport footer in vault ink that slides up over the
@@ -15,19 +17,19 @@ const SiteFooter = forwardRef<HTMLDivElement>(function SiteFooter(_p, ref) {
 
       <div className="site-footer__inner">
         <div className="site-footer__top">
-          <div className="site-footer__lead">
+          <motion.div className="site-footer__lead" {...reveal()}>
             <h2>Private money, for people and for teams.</h2>
-          </div>
+          </motion.div>
 
-          <nav className="site-footer__nav" aria-label="Product">
+          <motion.nav className="site-footer__nav" aria-label="Product" {...reveal(0.1)}>
             <a href={WALLET_URL}>Wallet</a>
             <a href={CONSOLE_URL}>Console</a>
             <a href={EXPLORER_URL} target="_blank" rel="noreferrer">
               Testnet explorer
             </a>
-          </nav>
+          </motion.nav>
 
-          <nav className="site-footer__nav" aria-label="Company">
+          <motion.nav className="site-footer__nav" aria-label="Company" {...reveal(0.18)}>
             <a href={SOCIALS.github} target="_blank" rel="noreferrer">
               GitHub
             </a>
@@ -37,10 +39,10 @@ const SiteFooter = forwardRef<HTMLDivElement>(function SiteFooter(_p, ref) {
             <a href={SOCIALS.linkedin} target="_blank" rel="noreferrer">
               LinkedIn
             </a>
-          </nav>
+          </motion.nav>
         </div>
 
-        <div className="site-footer__brand-row">
+        <motion.div className="site-footer__brand-row" {...reveal(0.15)}>
           <a className="site-footer__brand" href="/" aria-label="Benzo home">
             <span className="site-footer__mark" aria-hidden="true">
               <svg viewBox="0 0 256 256">
@@ -49,9 +51,9 @@ const SiteFooter = forwardRef<HTMLDivElement>(function SiteFooter(_p, ref) {
             </span>
             <span className="site-footer__word display">Benzo</span>
           </a>
-        </div>
+        </motion.div>
 
-        <div className="site-footer__legal">
+        <motion.div className="site-footer__legal" {...reveal(0.28)}>
           <p>© 2026 Benzo. Private by default.</p>
           <a href={SOCIALS.github} target="_blank" rel="noreferrer">
             Apache-2.0
@@ -62,7 +64,7 @@ const SiteFooter = forwardRef<HTMLDivElement>(function SiteFooter(_p, ref) {
           <a className="avax-badge" href="https://www.avax.network" target="_blank" rel="noreferrer">
             <img src="/avax/powered-by-avalanche.svg" alt="Powered by Avalanche" />
           </a>
-        </div>
+        </motion.div>
       </div>
     </footer>
   );

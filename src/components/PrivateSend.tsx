@@ -1,5 +1,7 @@
 import { useEffect, useRef } from "react";
+import { motion } from "motion/react";
 import gsap from "gsap";
+import { reveal } from "../lib/reveal";
 
 const GLYPHS = "0123456789abcdef";
 const BASE = 1067;
@@ -139,23 +141,25 @@ export default function PrivateSend() {
 
   return (
     <section ref={rootRef} className="psend" aria-label="A private send, animated">
-      <div className="vault-intro psend-eyebrow">
+      <motion.div className="vault-intro psend-eyebrow" {...reveal()}>
         <span className="rule" />
         <span className="line">Sent over Avalanche</span>
         <span className="rule" />
-      </div>
-      <h2 className="psend-title display">Watch a send stay private.</h2>
+      </motion.div>
+      <motion.h2 className="psend-title display" {...reveal(0.08)}>
+        Watch a send stay private.
+      </motion.h2>
 
       <div className="psend-stage">
-        <div className="pcard">
+        <motion.div className="pcard" {...reveal(0.15)}>
           <span className="pname">You</span>
           <span className="pbal display tnum">$8,214</span>
           <span className="psending">
             Sending <b>$120</b> to @maria
           </span>
-        </div>
+        </motion.div>
 
-        <div className="prail">
+        <motion.div className="prail" {...reveal(0.3)}>
           <div className="rail-track">
             <svg className="rail-logo" viewBox="0 0 639 564" aria-hidden="true">
               <path
@@ -175,14 +179,14 @@ export default function PrivateSend() {
           <div className="rail-caption">
             What the network sees <span className="rail-cipher tnum">· · · · · · · ·</span>
           </div>
-        </div>
+        </motion.div>
 
-        <div className="pcard">
+        <motion.div className="pcard" {...reveal(0.45)}>
           <span className="pname">@maria</span>
           <span className="pbal display tnum ps-rbal">{fmt(BASE)}</span>
           <span className="pplus display tnum">+$120</span>
           <span className="ppriv">✓ Private receipt saved</span>
-        </div>
+        </motion.div>
       </div>
     </section>
   );

@@ -1,6 +1,8 @@
 import { forwardRef, useMemo, useSyncExternalStore } from "react";
+import { motion } from "motion/react";
 import PrivateSend from "./PrivateSend";
 import { GALLERY_IMAGES } from "../lib/config";
+import { reveal } from "../lib/reveal";
 
 /**
  * Scattered-grid layout (structure from the archive spec):
@@ -67,11 +69,13 @@ const GalleryPanel = forwardRef<HTMLDivElement, Props>(function GalleryPanel({ w
   return (
     <div ref={panelRef} className="vault" role="region" aria-label="What stays private">
       <div ref={wrapRef} className="vault-wrap">
-        <div className="vault-intro">
+        <PrivateSend />
+
+        <motion.div className="vault-intro" {...reveal()}>
           <span className="rule" />
           <span className="line">Nobody's business but yours</span>
           <span className="rule" />
-        </div>
+        </motion.div>
 
         <div className="vault-grid">
           {cells.map((idx, i) => {
@@ -94,23 +98,21 @@ const GalleryPanel = forwardRef<HTMLDivElement, Props>(function GalleryPanel({ w
         </div>
 
         <div className="vault-how">
-          <div className="vault-intro how-eyebrow">
+          <motion.div className="vault-intro how-eyebrow" {...reveal()}>
             <span className="rule" />
             <span className="line">Private, yet provable</span>
             <span className="rule" />
-          </div>
-          {STEPS.map((s) => (
-            <div key={s.num} className="step">
+          </motion.div>
+          {STEPS.map((s, i) => (
+            <motion.div key={s.num} className="step" {...reveal(i * 0.12)}>
               <span className="num">{s.num}</span>
               <div>
                 <h2 className="verb display">{s.verb}</h2>
                 <p className="how-sub">{s.sub}</p>
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
-
-        <PrivateSend />
       </div>
     </div>
   );

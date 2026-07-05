@@ -457,10 +457,11 @@ body {
 }
 
 /* how it works — after the gallery */
+/* closes the vault, so it carries the bottom padding before the footer */
 .vault-how {
   max-width: 1060px;
   margin: 22vh auto 0;
-  padding: 0 clamp(20px, 4vw, 48px);
+  padding: 0 clamp(20px, 4vw, 48px) 26vh;
   color: var(--cream);
 }
 .vault-how .how-eyebrow {
@@ -508,11 +509,11 @@ body {
 }
 
 /* ————— the private send demo (sent over Avalanche) ————— */
-/* closes the vault, so it carries the bottom padding before the footer */
+/* opens the vault right after the hero hand-off; the cards follow */
 .psend {
   max-width: 1160px;
-  margin: 16vh auto 0;
-  padding: 0 clamp(20px, 4vw, 48px) 26vh;
+  margin: 0 auto;
+  padding: 2vh clamp(20px, 4vw, 48px) 24vh;
   color: var(--cream);
 }
 .psend-eyebrow {
