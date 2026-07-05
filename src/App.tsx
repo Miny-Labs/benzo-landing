@@ -8,7 +8,7 @@ import CustomCursor from "./components/CustomCursor";
 import TransitionWave from "./components/TransitionWave";
 import SiteFooter from "./components/SiteFooter";
 import StepHoverImages from "./components/StepHoverImages";
-import { BalanceInfo, BrandMark, HeaderNav, RotatingHeadline, ScrollHint } from "./components/overlays";
+import { BalanceInfo, BrandMark, HeaderNav, HeroBlock, ScrollHint } from "./components/overlays";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 // Mobile URL-bar collapse fires resize; don't let it rebuild the scrub.
@@ -42,7 +42,7 @@ export default function App() {
       const info = infoRef.current!;
       const footer = footerRef.current!;
       const hint = document.getElementById("scroll-hint");
-      const headline = document.getElementById("rot-headline");
+      const headline = document.getElementById("hero-block");
       const brand = document.getElementById("brand-mark");
       const nav = document.getElementById("site-nav");
       const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -192,7 +192,7 @@ export default function App() {
         <SiteFooter ref={footerRef} />
         <BrandMark />
         <HeaderNav />
-        <RotatingHeadline />
+        <HeroBlock />
         <BalanceInfo ref={infoRef} symbolRef={symbolRef} />
         <ScrollHint />
       </main>

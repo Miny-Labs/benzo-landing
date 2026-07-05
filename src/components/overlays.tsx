@@ -54,10 +54,10 @@ export function HeaderNav() {
 }
 
 /** Hero block: title, subtitle, and the doors in one composed unit. */
-export function RotatingHeadline() {
+export function HeroBlock() {
   return (
-    <motion.div id="rot-headline" className="headline" {...fade(0.3)}>
-      <div className="line-clip">
+    <motion.div id="hero-block" className="headline" {...fade(0.3)}>
+      <div className="title-box">
         <span className="line display">{HEADLINE}</span>
       </div>
       <p id="hero-sub" className="sub">
@@ -163,7 +163,7 @@ export const ScrollHint = () => (
   </motion.div>
 );
 
-/** The two doors. Lives inside the footer; keeps the full send-off ceremony. */
+/** The two doors, under the hero subtitle. Full send-off ceremony on click. */
 export function OutroCtas() {
   const rootRef = useRef<HTMLDivElement | null>(null);
 
