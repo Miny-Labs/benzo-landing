@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
-import { CONSOLE_URL, LEAVE_EVENT, WALLET_URL } from "../lib/config";
+import { CONSOLE_URL, GLYPH_PATH, LEAVE_EVENT, WALLET_URL } from "../lib/config";
 
 const SCRAMBLE = "█▓▒░•§#%¤";
 
@@ -14,6 +14,7 @@ const CONTENT = {
       "Cash in, cash out, split anything",
       "Every payment gets a provable receipt",
     ],
+    cta: "Click the card to open the wallet",
   },
   business: {
     kicker: "For your team",
@@ -24,6 +25,7 @@ const CONTENT = {
       "Treasury with totals you can prove",
       "Give auditors exactly what they need",
     ],
+    cta: "Click the card to open the console",
   },
 } as const;
 type DoorKey = keyof typeof CONTENT;
@@ -190,11 +192,43 @@ export default function HeroDoors() {
               <span className="t-word display">Personal</span>
               <span className="t-sub">The wallet ↗</span>
             </span>
+            <span className="kit kit-p" aria-hidden="true">
+              <span className="chiprow">
+                <svg className="chip" viewBox="0 0 44 32">
+                  <defs>
+                    <linearGradient id="chipg" x1="0" y1="0" x2="1" y2="1">
+                      <stop offset="0" stopColor="#e8cf8a" />
+                      <stop offset="0.55" stopColor="#c9a24f" />
+                      <stop offset="1" stopColor="#e3c87f" />
+                    </linearGradient>
+                  </defs>
+                  <rect x="1" y="1" width="42" height="30" rx="6.5" fill="url(#chipg)" stroke="#8a6b2a" strokeOpacity="0.45" />
+                  <path
+                    d="M1 11h13M1 21h13M30 11h13M30 21h13M14 11c4 0 4 10 0 10M30 11c-4 0-4 10 0 10M22 1v8M22 23v8"
+                    fill="none"
+                    stroke="#8a6b2a"
+                    strokeOpacity="0.5"
+                    strokeWidth="1.4"
+                  />
+                </svg>
+                <svg className="waves" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round">
+                  <path d="M7.5 10a5.5 5.5 0 0 1 0 4" />
+                  <path d="M10.8 8a9 9 0 0 1 0 8" />
+                  <path d="M14.1 6a12.6 12.6 0 0 1 0 12" />
+                </svg>
+              </span>
+              <span className="pan tnum">•••• •••• •••• 4291</span>
+            </span>
           </a>
           <a className="tri tri-b" href={CONSOLE_URL} onMouseEnter={enter("business")} aria-label="Business — open the console">
             <span className="t-label">
               <span className="t-word display">Business</span>
               <span className="t-sub">The console ↗</span>
+            </span>
+            <span className="kit kit-b" aria-hidden="true">
+              <svg className="netmark" viewBox="0 0 256 256">
+                <path d={GLYPH_PATH} />
+              </svg>
             </span>
           </a>
         </div>
@@ -213,6 +247,9 @@ export default function HeroDoors() {
             </p>
           </div>
         ))}
+        <p className="dp-cta">
+          {content.cta} <span className="dp-cta-arrow">↗</span>
+        </p>
       </div>
     </>
   );
