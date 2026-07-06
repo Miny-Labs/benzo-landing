@@ -1,7 +1,7 @@
 import { forwardRef, useEffect, useRef } from "react";
 import { motion } from "motion/react";
 import HeroDoors from "./HeroDoors";
-import { BALANCE_EVENT, EXPLORER_URL, GLYPH_PATH, HEADLINE, SOCIALS } from "../lib/config";
+import { BALANCE_EVENT, EXPLORER_URL, GLYPH_PATH, HEADLINE } from "../lib/config";
 
 const EASE = [0.25, 0.1, 0.25, 1] as const;
 // When the page loads already scrolled (reload mid-page, bfcache), skip entry
@@ -35,17 +35,65 @@ export function BrandMark() {
   );
 }
 
-export function HeaderNav() {
+/** Avalanche's own alpha-channel loops, played through an A-shaped cutout. */
+const AVAX_QUEUE = [6, 3, 8, 3, 7, 5, 6, 4, 3, 7, 2, 5, 7, 5];
+const AVAX_VID = (n: number) => `https://atk2comacjoao5mp.public.blob.vercel-storage.com/alpha_webm/${n}.webm`;
+
+function AvaxMark() {
+  const vidRef = useRef<HTMLVideoElement>(null);
+  const idx = useRef(0);
+  const reduced =
+    typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  useEffect(() => {
+    const v = vidRef.current;
+    if (!v) return;
+    // infinite queue: each clip hands off to the next, then wraps
+    const onEnd = () => {
+      idx.current = (idx.current + 1) % AVAX_QUEUE.length;
+      v.src = AVAX_VID(AVAX_QUEUE[idx.current]);
+      v.play().catch(() => {});
+    };
+    v.addEventListener("ended", onEnd);
+    // the header chrome goes inert once the vault covers it — stop decoding
+    const nav = v.closest("nav");
+    let mo: MutationObserver | null = null;
+    if (nav) {
+      mo = new MutationObserver(() => {
+        if (nav.hasAttribute("inert")) v.pause();
+        else v.play().catch(() => {});
+      });
+      mo.observe(nav, { attributes: true, attributeFilter: ["inert"] });
+    }
+    return () => {
+      v.removeEventListener("ended", onEnd);
+      mo?.disconnect();
+    };
+  }, []);
+
   return (
-    <motion.nav id="site-nav" className="xchrome nav" {...rise(0.15)} aria-label="Site">
-      <a className="about" href={SOCIALS.x} target="_blank" rel="noreferrer">
-        X
-      </a>
-      <div className="links">
-        <a href={EXPLORER_URL} target="_blank" rel="noreferrer">
-          [ Explorer ]
-        </a>
-      </div>
+    <a
+      className="avax-mark"
+      href={EXPLORER_URL}
+      target="_blank"
+      rel="noreferrer"
+      aria-label="Powered by Avalanche — open the testnet explorer"
+    >
+      <span className="avax-mark__label" aria-hidden="true">
+        Powered by Avalanche
+      </span>
+      <span className="avax-mark__cut">
+        {!reduced && <video ref={vidRef} src={AVAX_VID(AVAX_QUEUE[0])} autoPlay muted playsInline />}
+      </span>
+    </a>
+  );
+}
+
+export function HeaderNav() {
+  // not xchrome: exclusion blending would invert the video in the cutout
+  return (
+    <motion.nav id="site-nav" className="nav nav-solid" {...rise(0.15)} aria-label="Site">
+      <AvaxMark />
     </motion.nav>
   );
 }

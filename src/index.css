@@ -210,6 +210,65 @@ body {
   align-items: center;
   gap: 50px;
 }
+/* non-blended variant: the avalanche cutout video must keep true color */
+.nav-solid {
+  position: fixed;
+  z-index: 20;
+  height: 44px;
+  pointer-events: none;
+}
+.nav-solid a {
+  pointer-events: auto;
+  text-decoration: none;
+}
+/* the A cutout: avalanche's alpha loops playing through the logo shape;
+   hovering slides the full credit out from behind it */
+.avax-mark {
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+.avax-mark__label {
+  max-width: 0;
+  opacity: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-weight: 800;
+  color: var(--ink);
+  transition:
+    max-width 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.3s ease,
+    padding 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.avax-mark:hover .avax-mark__label,
+.avax-mark:focus-visible .avax-mark__label {
+  max-width: 270px;
+  opacity: 0.85;
+  padding-right: 14px;
+}
+.avax-mark__cut {
+  display: block;
+  width: 46px;
+  height: 41px;
+  background: #e84142;
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 639 564'%3E%3Cpath d='M399.885 563.465H613.609C632.467 563.465 644.269 543.041 634.827 526.718L527.966 341.641C518.524 325.318 494.97 325.318 485.529 341.641L378.667 526.718C369.226 543.041 381.027 563.465 399.885 563.465Z'/%3E%3Cpath d='M426.609 166.12L338.779 13.9644C329.909 -1.41521 307.697 -1.41521 298.827 13.9644L3.43383 525.589C-6.28089 542.435 5.86872 563.454 25.2982 563.454H201.182C219.94 563.454 237.258 553.441 246.625 537.217L426.609 225.477C437.218 207.116 437.218 184.481 426.609 166.12Z'/%3E%3C/svg%3E");
+  -webkit-mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 639 564'%3E%3Cpath d='M399.885 563.465H613.609C632.467 563.465 644.269 543.041 634.827 526.718L527.966 341.641C518.524 325.318 494.97 325.318 485.529 341.641L378.667 526.718C369.226 543.041 381.027 563.465 399.885 563.465Z'/%3E%3Cpath d='M426.609 166.12L338.779 13.9644C329.909 -1.41521 307.697 -1.41521 298.827 13.9644L3.43383 525.589C-6.28089 542.435 5.86872 563.454 25.2982 563.454H201.182C219.94 563.454 237.258 553.441 246.625 537.217L426.609 225.477C437.218 207.116 437.218 184.481 426.609 166.12Z'/%3E%3C/svg%3E");
+  mask-size: contain;
+  mask-repeat: no-repeat;
+  mask-position: center;
+}
+.avax-mark__cut video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
 .nav .links {
   display: flex;
   align-items: center;
