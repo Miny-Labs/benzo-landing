@@ -16,6 +16,39 @@ export default function CustomCursor() {
     if (!window.matchMedia("(pointer: fine)").matches || window.innerWidth < 1024) return;
 
     let censorTimer: number | null = null;
+    let introTimer: number | null = null;
+    let side: "p" | "b" | null = null;
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    // entering a door (or crossing the seam) decrypts the label in
+    const setLabel = (s: "p" | "b") => {
+      el.classList.toggle("tag-p", s === "p");
+      el.classList.toggle("tag-b", s === "b");
+      if (censorTimer || side === s) return;
+      side = s;
+      const txt = s === "p" ? "Open the wallet" : "Open the console";
+      if (reduced) {
+        tag.textContent = txt;
+        return;
+      }
+      if (introTimer) window.clearInterval(introTimer);
+      let frame = 0;
+      const total = 8;
+      introTimer = window.setInterval(() => {
+        frame++;
+        const n = Math.ceil((frame / total) * txt.length);
+        let out = "";
+        for (let i = 0; i < txt.length; i++) {
+          out += i < n || txt[i] === " " ? txt[i] : GLYPHS[(Math.random() * GLYPHS.length) | 0];
+        }
+        tag.textContent = out;
+        if (frame >= total && introTimer) {
+          window.clearInterval(introTimer);
+          introTimer = null;
+          tag.textContent = txt;
+        }
+      }, 34);
+    };
 
     const onMove = (e: MouseEvent) => {
       el.style.left = `${e.clientX}px`;
@@ -26,17 +59,21 @@ export default function CustomCursor() {
       const t = e.target as HTMLElement;
       const tri = t.closest(".tri");
       el.classList.toggle("grow", !tri && !!t.closest("a, button, [data-cursor]"));
-      // over the card the ring becomes the click prompt itself
+      // over the card the cursor becomes the click prompt itself
       el.classList.toggle("tag", !!tri);
-      if (tri && !censorTimer) {
-        tag.textContent = tri.classList.contains("tri-p") ? "Open the wallet" : "Open the console";
-      }
+      if (tri) setLabel(tri.classList.contains("tri-p") ? "p" : "b");
+      else side = null; // re-entering the card decrypts again
       // over the balance digits the cursor steps aside — the reveal is the feedback
       el.classList.toggle("quiet", !tri && !!t.closest(".balance .amount"));
     };
     const onLeave = () => el.classList.remove("on");
     // click: the prompt censors itself, left to right, like everything else here
     const onDoorClick = () => {
+      if (introTimer) {
+        window.clearInterval(introTimer);
+        introTimer = null;
+        tag.textContent = side === "b" ? "Open the console" : "Open the wallet";
+      }
       const txt = tag.textContent || "";
       if (!txt || censorTimer) return;
       let frame = 0;
@@ -66,6 +103,7 @@ export default function CustomCursor() {
     document.documentElement.addEventListener("mouseleave", onLeave);
     return () => {
       if (censorTimer) window.clearInterval(censorTimer);
+      if (introTimer) window.clearInterval(introTimer);
       window.removeEventListener("mousemove", onMove);
       window.removeEventListener("mouseover", onOver);
       window.removeEventListener(LEAVE_EVENT, onDoorClick);
@@ -76,7 +114,6 @@ export default function CustomCursor() {
 
   return (
     <div ref={ref} className="cursor" aria-hidden="true">
-      <span className="cursor-dot" />
       <svg viewBox="0 0 48 48" fill="none">
         <circle cx="24" cy="24" r="22.75" stroke="#fff" strokeWidth="2.5" />
         <g transform="translate(15.5 15.5) scale(0.0664)">

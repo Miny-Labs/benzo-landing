@@ -1519,8 +1519,6 @@ body {
 }
 
 /* ————— custom cursor ————— */
-/* two-state cursor: a precise dot at rest that blooms into the ring+glyph
-   over anything clickable */
 .cursor {
   position: fixed;
   z-index: 50;
@@ -1532,40 +1530,17 @@ body {
   opacity: 0;
   display: none;
 }
-.cursor-dot {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 9px;
-  height: 9px;
-  margin: -4.5px 0 0 -4.5px;
-  border-radius: 50%;
-  background: #fff;
-  transition:
-    transform 0.2s cubic-bezier(0.22, 1, 0.36, 1),
-    opacity 0.2s ease;
-}
 .cursor svg {
-  position: absolute;
-  inset: 0;
   width: 48px;
   height: 48px;
-  opacity: 0;
-  transform: scale(0.5);
-  transition:
-    transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
-    opacity 0.2s ease;
+  display: block;
+  transition: transform 0.2s cubic-bezier(0.22, 1, 0.36, 1);
 }
 .cursor.on {
   opacity: 1;
 }
-.cursor.grow .cursor-dot {
-  transform: scale(0.3);
-  opacity: 0;
-}
 .cursor.grow svg {
-  opacity: 1;
-  transform: scale(1);
+  transform: scale(1.35);
 }
 /* the hover still takes over as cursor on the stage scenes */
 .cursor.suppress,
@@ -1589,16 +1564,44 @@ body {
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-  background: var(--ink);
-  color: var(--cream);
   font-size: 11px;
   letter-spacing: 0.15em;
   text-transform: uppercase;
   font-weight: 700;
   white-space: nowrap;
-  padding: 9px 14px;
+  padding: 10px 16px;
   border-radius: 999px;
   box-shadow: 0 12px 28px oklch(0.2 0.05 292 / 0.4);
+}
+/* the pill wears the skin of the door it's over */
+.cursor.tag-p .cursor-tag {
+  background: radial-gradient(130% 160% at 20% 0%, oklch(0.93 0.04 292), oklch(0.74 0.15 292));
+  color: var(--ink);
+}
+.cursor.tag-b .cursor-tag {
+  background: var(--ink);
+  color: var(--cream);
+}
+/* a violet pulse radiating off the pill — "this is the button" */
+.cursor.tag .cursor-tag::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+  animation: tagPulse 1.5s ease-out infinite;
+}
+@keyframes tagPulse {
+  0% {
+    box-shadow: 0 0 0 0 oklch(0.68 0.15 292 / 0.55);
+  }
+  100% {
+    box-shadow: 0 0 0 16px oklch(0.68 0.15 292 / 0);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cursor.tag .cursor-tag::before {
+    animation: none;
+  }
 }
 @media (pointer: fine) and (min-width: 1024px) {
   .cursor {
