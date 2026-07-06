@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
-import { BALANCE_EVENT, CONSOLE_URL, GLYPH_PATH, LEAVE_EVENT, WALLET_URL } from "../lib/config";
+import { BALANCE_EVENT, CONSOLE_URL, LEAVE_EVENT, WALLET_URL } from "../lib/config";
 
 const SCRAMBLE = "█▓▒░•§#%¤";
 
@@ -202,12 +202,6 @@ export default function HeroDoors() {
               <span className="t-word display">Personal</span>
               <span className="t-sub">The wallet ↗</span>
             </span>
-            <span className="card-brand" aria-hidden="true">
-              <svg viewBox="0 0 256 256">
-                <path d={GLYPH_PATH} />
-              </svg>
-              <span className="display">Benzo</span>
-            </span>
             <span className="kit kit-p" aria-hidden="true">
               <span className="chiprow">
                 <svg className="chip" viewBox="0 0 44 32">
@@ -241,12 +235,6 @@ export default function HeroDoors() {
             <span className="t-label">
               <span className="t-word display">Business</span>
               <span className="t-sub">The console ↗</span>
-            </span>
-            <span className="card-brand" aria-hidden="true">
-              <svg viewBox="0 0 256 256">
-                <path d={GLYPH_PATH} />
-              </svg>
-              <span className="display">Benzo</span>
             </span>
             <span className="kit kit-b" aria-hidden="true">
               <span className="chiprow">

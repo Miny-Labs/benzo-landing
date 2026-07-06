@@ -1015,42 +1015,12 @@ body {
 .kit-b .meta {
   color: oklch(0.965 0.007 106 / 0.5);
 }
-.card-brand {
-  position: absolute;
-  top: 16px;
-  right: 20px;
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  pointer-events: none;
-  transition: opacity 0.3s ease;
-}
-.card-brand svg {
-  width: 19px;
-  height: 19px;
-  fill: currentColor;
-}
-.card-brand .display {
-  font-size: 15px;
-  letter-spacing: -0.02em;
-  line-height: 1;
-}
-/* the personal brand sits clear of the resting seam so it's never sliced */
-.tri-p .card-brand {
-  right: 64px;
-  color: oklch(0.32 0.06 292 / 0.8);
-}
-.tri-b .card-brand {
-  color: oklch(0.965 0.007 106 / 0.85);
-}
 /* the business face's furniture only exists once that side is open —
    at rest, fragments of it would peek through the seam */
-.tri-b .card-brand,
 .kit-b {
   opacity: 0;
 }
 @media (pointer: fine) {
-  .doors:has(.tri-b:hover) .tri-b .card-brand,
   .doors:has(.tri-b:hover) .kit-b {
     opacity: 1;
   }
