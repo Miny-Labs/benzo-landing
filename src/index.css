@@ -1147,6 +1147,19 @@ body {
     clip-path: polygon(0 0, 58% 0, 0 58%);
   }
 }
+/* click: the chosen side floods the whole card, swallowing the seam,
+   just before the wave carries the page away (placed after the hover
+   rules so the flood wins the cascade) */
+.tri.filling {
+  z-index: 3;
+  transition: clip-path 0.55s cubic-bezier(0.7, 0, 0.2, 1);
+}
+.tri-p.filling {
+  clip-path: polygon(0 0, 300% 0, 0 300%);
+}
+.tri-b.filling {
+  clip-path: polygon(100% -200%, 100% 100%, -200% 100%);
+}
 .t-label {
   position: absolute;
   display: flex;

@@ -38,12 +38,12 @@ export function BrandMark() {
 export function HeaderNav() {
   return (
     <motion.nav id="site-nav" className="xchrome nav" {...rise(0.15)} aria-label="Site">
-      <a className="about" href={SOCIALS.github} target="_blank" rel="noreferrer">
-        GitHub
+      <a className="about" href={SOCIALS.x} target="_blank" rel="noreferrer">
+        X
       </a>
       <div className="links">
         <a href={EXPLORER_URL} target="_blank" rel="noreferrer">
-          [ Testnet ]
+          [ Explorer ]
         </a>
       </div>
     </motion.nav>

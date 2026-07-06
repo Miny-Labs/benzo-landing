@@ -58,6 +58,9 @@ export default function HeroDoors() {
         if (leaving) return;
         leaving = true;
 
+        // the chosen side floods the whole card before the wave arrives
+        door.classList.add("filling");
+
         const r = root.getBoundingClientRect();
         const cx = (e.clientX || r.left + r.width / 2) - r.left;
         const cy = (e.clientY || r.top + r.height / 2) - r.top;
@@ -93,7 +96,10 @@ export default function HeroDoors() {
     }
 
     const onPageShow = (e: PageTransitionEvent) => {
-      if (e.persisted) leaving = false;
+      if (e.persisted) {
+        leaving = false;
+        root.querySelectorAll(".filling").forEach((el) => el.classList.remove("filling"));
+      }
     };
     window.addEventListener("pageshow", onPageShow);
     cleanups.push(() => window.removeEventListener("pageshow", onPageShow));
