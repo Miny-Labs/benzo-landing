@@ -210,6 +210,13 @@ body {
   align-items: center;
   gap: 50px;
 }
+/* non-blended brand: true ink, matching the headline */
+.brand-solid {
+  position: fixed;
+  z-index: 20;
+  pointer-events: none;
+  color: var(--ink);
+}
 /* non-blended variant: the avalanche cutout video must keep true color */
 .nav-solid {
   position: fixed;
@@ -229,30 +236,45 @@ body {
   gap: 0;
 }
 .avax-mark__label {
-  max-width: 0;
-  opacity: 0;
-  overflow: hidden;
+  position: relative;
   white-space: nowrap;
-  font-size: 11px;
+  padding-right: 16px;
+  font-size: 11.5px;
   letter-spacing: 0.18em;
   text-transform: uppercase;
   font-weight: 800;
-  color: var(--ink);
-  transition:
-    max-width 0.5s cubic-bezier(0.22, 1, 0.36, 1),
-    opacity 0.3s ease,
-    padding 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  color: oklch(0.28 0.03 262 / 0.85);
+  text-align: right;
 }
-.avax-mark:hover .avax-mark__label,
-.avax-mark:focus-visible .avax-mark__label {
-  max-width: 270px;
-  opacity: 0.85;
-  padding-right: 14px;
+.avax-mark__label .l-rest,
+.avax-mark__label .l-hover {
+  display: block;
+  transition:
+    opacity 0.28s ease,
+    transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.avax-mark__label .l-hover {
+  position: absolute;
+  right: 16px;
+  top: 0;
+  opacity: 0;
+  transform: translateY(7px);
+  color: var(--violet);
+}
+.avax-mark:hover .l-rest,
+.avax-mark:focus-visible .l-rest {
+  opacity: 0;
+  transform: translateY(-7px);
+}
+.avax-mark:hover .l-hover,
+.avax-mark:focus-visible .l-hover {
+  opacity: 1;
+  transform: none;
 }
 .avax-mark__cut {
   display: block;
-  width: 46px;
-  height: 41px;
+  width: 64px;
+  height: 57px;
   background: #e84142;
   -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 639 564'%3E%3Cpath d='M399.885 563.465H613.609C632.467 563.465 644.269 543.041 634.827 526.718L527.966 341.641C518.524 325.318 494.97 325.318 485.529 341.641L378.667 526.718C369.226 543.041 381.027 563.465 399.885 563.465Z'/%3E%3Cpath d='M426.609 166.12L338.779 13.9644C329.909 -1.41521 307.697 -1.41521 298.827 13.9644L3.43383 525.589C-6.28089 542.435 5.86872 563.454 25.2982 563.454H201.182C219.94 563.454 237.258 553.441 246.625 537.217L426.609 225.477C437.218 207.116 437.218 184.481 426.609 166.12Z'/%3E%3C/svg%3E");
   -webkit-mask-size: contain;

@@ -25,9 +25,10 @@ const fade = (delay: number) =>
       };
 
 export function BrandMark() {
+  // solid ink, same as the headline — exclusion blending gave it a stray hue
   return (
-    <motion.div id="brand-mark" className="xchrome brand" {...rise(0)}>
-      <svg viewBox="0 0 256 256" fill="#fff" role="img" aria-label="Benzo">
+    <motion.div id="brand-mark" className="brand brand-solid" {...rise(0)}>
+      <svg viewBox="0 0 256 256" fill="currentColor" role="img" aria-label="Benzo">
         <path d={GLYPH_PATH} />
       </svg>
       <span className="word display">Benzo</span>
@@ -80,7 +81,8 @@ function AvaxMark() {
       aria-label="Powered by Avalanche — open the testnet explorer"
     >
       <span className="avax-mark__label" aria-hidden="true">
-        Powered by Avalanche
+        <span className="l-rest">Private L1 on Avalanche</span>
+        <span className="l-hover">View explorer</span>
       </span>
       <span className="avax-mark__cut">
         {!reduced && <video ref={vidRef} src={AVAX_VID(AVAX_QUEUE[0])} autoPlay muted playsInline />}
