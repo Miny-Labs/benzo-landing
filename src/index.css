@@ -955,50 +955,133 @@ body {
     0 26px 48px -20px oklch(0.25 0.06 292 / 0.5),
     0 10px 20px -12px oklch(0.25 0.06 292 / 0.4);
 }
-/* card furniture: chip + contactless + masked PAN on the personal face,
-   the glyph as a network mark on the business face */
+/* card furniture: both faces are fully dressed cards — chip, contactless,
+   masked PAN, holder line, and the Benzo brand top-right. The business
+   face's kit lives under the personal region at idle, so the seam reveals
+   it as the ink side expands. */
+.doors-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  background: linear-gradient(
+    115deg,
+    transparent 42%,
+    oklch(1 0 0 / 0.14) 49%,
+    oklch(1 0 0 / 0.04) 56%,
+    transparent 63%
+  );
+}
 .kit {
   position: absolute;
-  pointer-events: none;
-  transition: opacity 0.3s ease;
-}
-.kit-p {
   left: 24px;
   top: 37%;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 13px;
+  gap: 12px;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
 }
-.kit-p .chiprow {
+.kit .chiprow {
   display: flex;
   align-items: center;
   gap: 12px;
 }
-.kit-p .chip {
+.kit .chip {
   width: 42px;
   height: 31px;
 }
-.kit-p .waves {
+.kit .waves {
   width: 21px;
   height: 21px;
-  color: oklch(0.35 0.06 292 / 0.6);
 }
-.kit-p .pan {
+.kit .pan {
   font-size: 13px;
   font-weight: 700;
   letter-spacing: 0.13em;
+}
+.kit .meta {
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+.kit-p .waves {
+  color: oklch(0.35 0.06 292 / 0.6);
+}
+.kit-p .pan {
   color: oklch(0.35 0.06 292 / 0.66);
 }
-.kit-b {
-  right: 24px;
-  top: 30%;
+.kit-p .meta {
+  color: oklch(0.35 0.06 292 / 0.48);
 }
-.kit-b .netmark {
-  width: 30px;
-  height: 30px;
-  fill: var(--cream);
-  opacity: 0.45;
+/* the business kit starts lower so the squeezed personal corner never
+   covers its chip */
+.kit-b {
+  top: 52%;
+}
+.kit-b .waves {
+  color: oklch(0.965 0.007 106 / 0.6);
+}
+.kit-b .pan {
+  color: oklch(0.965 0.007 106 / 0.78);
+}
+.kit-b .meta {
+  color: oklch(0.965 0.007 106 / 0.5);
+}
+.card-brand {
+  position: absolute;
+  top: 16px;
+  right: 20px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+.card-brand svg {
+  width: 19px;
+  height: 19px;
+  fill: currentColor;
+}
+.card-brand .display {
+  font-size: 15px;
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+.tri-p .card-brand {
+  color: oklch(0.32 0.06 292 / 0.8);
+}
+.tri-b .card-brand {
+  color: oklch(0.965 0.007 106 / 0.85);
+}
+/* the click prompt sits under the card and fades in with either panel */
+.door-cta {
+  position: absolute;
+  top: calc(100% + 16px);
+  left: 2px;
+  font-size: 11.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-weight: 700;
+  white-space: nowrap;
+  color: var(--violet);
+  opacity: 0;
+  transform: translateY(4px);
+  transition:
+    opacity 0.25s ease,
+    transform 0.25s ease;
+  pointer-events: none;
+}
+.door-cta.on {
+  opacity: 1;
+  transform: none;
+}
+/* phones get one door: a single wallet button instead of the card */
+.door-mobile {
+  display: none;
 }
 .tri {
   position: absolute;
@@ -1121,14 +1204,6 @@ body {
   font-weight: 600;
   line-height: 1.45;
 }
-.dp-cta {
-  margin: 16px 0 0;
-  font-size: 11.5px;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  font-weight: 700;
-  color: var(--violet);
-}
 .dp-cta-arrow {
   display: inline-block;
   animation: dpNudge 1.5s ease-in-out infinite;
@@ -1163,8 +1238,30 @@ body {
     left: 24px;
     right: 24px;
     width: auto;
-    height: 128px;
+    height: auto;
+    aspect-ratio: auto;
     margin: 0;
+    perspective: none;
+  }
+  .doors-card,
+  .door-cta {
+    display: none;
+  }
+  .door-mobile {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    height: 58px;
+    border-radius: 999px;
+    background: radial-gradient(130% 160% at 18% 0%, oklch(0.91 0.045 292) 12%, oklch(0.68 0.165 292) 100%);
+    color: var(--ink);
+    font-size: 17.5px;
+    letter-spacing: -0.01em;
+    text-decoration: none;
+    box-shadow:
+      inset 0 1px 0 oklch(1 0 0 / 0.4),
+      0 16px 36px oklch(0.55 0.2 292 / 0.35);
   }
 }
 .petal {

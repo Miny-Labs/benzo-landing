@@ -51,7 +51,7 @@ export default function HeroDoors() {
     const cleanups: Array<() => void> = [];
     let leaving = false;
 
-    for (const door of Array.from(root.querySelectorAll<HTMLAnchorElement>("a.tri"))) {
+    for (const door of Array.from(root.querySelectorAll<HTMLAnchorElement>("a.tri, a.door-mobile"))) {
       const onClick = (e: MouseEvent) => {
         if (reduced || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
         e.preventDefault();
@@ -192,6 +192,12 @@ export default function HeroDoors() {
               <span className="t-word display">Personal</span>
               <span className="t-sub">The wallet ↗</span>
             </span>
+            <span className="card-brand" aria-hidden="true">
+              <svg viewBox="0 0 256 256">
+                <path d={GLYPH_PATH} />
+              </svg>
+              <span className="display">Benzo</span>
+            </span>
             <span className="kit kit-p" aria-hidden="true">
               <span className="chiprow">
                 <svg className="chip" viewBox="0 0 44 32">
@@ -218,6 +224,7 @@ export default function HeroDoors() {
                 </svg>
               </span>
               <span className="pan tnum">•••• •••• •••• 4291</span>
+              <span className="meta tnum">@you · 12/29</span>
             </span>
           </a>
           <a className="tri tri-b" href={CONSOLE_URL} onMouseEnter={enter("business")} aria-label="Business — open the console">
@@ -225,13 +232,41 @@ export default function HeroDoors() {
               <span className="t-word display">Business</span>
               <span className="t-sub">The console ↗</span>
             </span>
-            <span className="kit kit-b" aria-hidden="true">
-              <svg className="netmark" viewBox="0 0 256 256">
+            <span className="card-brand" aria-hidden="true">
+              <svg viewBox="0 0 256 256">
                 <path d={GLYPH_PATH} />
               </svg>
+              <span className="display">Benzo</span>
+            </span>
+            <span className="kit kit-b" aria-hidden="true">
+              <span className="chiprow">
+                <svg className="chip" viewBox="0 0 44 32">
+                  <rect x="1" y="1" width="42" height="30" rx="6.5" fill="url(#chipg)" stroke="#8a6b2a" strokeOpacity="0.45" />
+                  <path
+                    d="M1 11h13M1 21h13M30 11h13M30 21h13M14 11c4 0 4 10 0 10M30 11c-4 0-4 10 0 10M22 1v8M22 23v8"
+                    fill="none"
+                    stroke="#8a6b2a"
+                    strokeOpacity="0.5"
+                    strokeWidth="1.4"
+                  />
+                </svg>
+                <svg className="waves" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round">
+                  <path d="M7.5 10a5.5 5.5 0 0 1 0 4" />
+                  <path d="M10.8 8a9 9 0 0 1 0 8" />
+                  <path d="M14.1 6a12.6 12.6 0 0 1 0 12" />
+                </svg>
+              </span>
+              <span className="pan tnum">•••• •••• •••• 7305</span>
+              <span className="meta tnum">@yourco · 01/31</span>
             </span>
           </a>
         </div>
+        <span className={`door-cta${active ? " on" : ""}`} aria-hidden="true">
+          {content.cta} <span className="dp-cta-arrow">↗</span>
+        </span>
+        <a className="door-mobile display" href={WALLET_URL}>
+          Open the wallet <span aria-hidden="true">↗</span>
+        </a>
       </div>
 
       <div ref={panelRef} className="door-panel" aria-hidden={!active}>
@@ -247,9 +282,6 @@ export default function HeroDoors() {
             </p>
           </div>
         ))}
-        <p className="dp-cta">
-          {content.cta} <span className="dp-cta-arrow">↗</span>
-        </p>
       </div>
     </>
   );
