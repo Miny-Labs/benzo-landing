@@ -223,6 +223,7 @@ body {
   z-index: 20;
   height: 44px;
   pointer-events: none;
+  color: var(--ink);
 }
 .nav-solid a {
   pointer-events: auto;

@@ -1,7 +1,19 @@
-import { forwardRef, useEffect, useRef } from "react";
+import { forwardRef, useEffect, useRef, useSyncExternalStore } from "react";
 import { motion } from "motion/react";
 import HeroDoors from "./HeroDoors";
-import { BALANCE_EVENT, EXPLORER_URL, GLYPH_PATH, HEADLINE } from "../lib/config";
+import { BALANCE_EVENT, EXPLORER_URL, GLYPH_PATH, HEADLINE, SOCIALS } from "../lib/config";
+
+const PHONE_Q = "(max-width: 639px)";
+const usePhone = () =>
+  useSyncExternalStore(
+    (cb) => {
+      const m = window.matchMedia(PHONE_Q);
+      m.addEventListener("change", cb);
+      return () => m.removeEventListener("change", cb);
+    },
+    () => window.matchMedia(PHONE_Q).matches,
+    () => false,
+  );
 
 const EASE = [0.25, 0.1, 0.25, 1] as const;
 // When the page loads already scrolled (reload mid-page, bfcache), skip entry
@@ -94,10 +106,25 @@ function AvaxMark() {
 }
 
 export function HeaderNav() {
-  // not xchrome: exclusion blending would invert the video in the cutout
+  // not xchrome: exclusion blending would invert the video in the cutout.
+  // Phones skip the hover-driven avalanche mark and keep plain links.
+  const phone = usePhone();
   return (
     <motion.nav id="site-nav" className="nav nav-solid" {...rise(0.15)} aria-label="Site">
-      <AvaxMark />
+      {phone ? (
+        <>
+          <a className="about" href={SOCIALS.x} target="_blank" rel="noreferrer">
+            X
+          </a>
+          <div className="links">
+            <a href={EXPLORER_URL} target="_blank" rel="noreferrer">
+              [ Testnet ]
+            </a>
+          </div>
+        </>
+      ) : (
+        <AvaxMark />
+      )}
     </motion.nav>
   );
 }
