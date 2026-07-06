@@ -76,6 +76,7 @@ export default function CustomCursor() {
 
   return (
     <div ref={ref} className="cursor" aria-hidden="true">
+      <span className="cursor-dot" />
       <svg viewBox="0 0 48 48" fill="none">
         <circle cx="24" cy="24" r="22.75" stroke="#fff" strokeWidth="2.5" />
         <g transform="translate(15.5 15.5) scale(0.0664)">

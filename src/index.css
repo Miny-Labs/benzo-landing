@@ -1068,6 +1068,12 @@ body {
   transition: clip-path 0.5s cubic-bezier(0.22, 1, 0.36, 1);
   will-change: clip-path;
 }
+/* the label pill replaces the pointer entirely over the card */
+@media (pointer: fine) and (min-width: 1024px) {
+  .tri {
+    cursor: none;
+  }
+}
 .tri:focus-visible {
   outline: 3px solid oklch(0.553 0.207 292 / 0.5);
   outline-offset: 2px;
@@ -1513,45 +1519,76 @@ body {
 }
 
 /* ————— custom cursor ————— */
+/* two-state cursor: a precise dot at rest that blooms into the ring+glyph
+   over anything clickable */
 .cursor {
   position: fixed;
   z-index: 50;
+  width: 48px;
+  height: 48px;
   pointer-events: none;
   mix-blend-mode: exclusion;
   transform: translate(-50%, -50%);
   opacity: 0;
   display: none;
 }
+.cursor-dot {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 9px;
+  height: 9px;
+  margin: -4.5px 0 0 -4.5px;
+  border-radius: 50%;
+  background: #fff;
+  transition:
+    transform 0.2s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.2s ease;
+}
 .cursor svg {
+  position: absolute;
+  inset: 0;
   width: 48px;
   height: 48px;
-  display: block;
-  transition: transform 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+  opacity: 0;
+  transform: scale(0.5);
+  transition:
+    transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.2s ease;
 }
 .cursor.on {
   opacity: 1;
 }
+.cursor.grow .cursor-dot {
+  transform: scale(0.3);
+  opacity: 0;
+}
 .cursor.grow svg {
-  transform: scale(1.35);
+  opacity: 1;
+  transform: scale(1);
 }
 /* the hover still takes over as cursor on the stage scenes */
 .cursor.suppress,
 .cursor.quiet {
   opacity: 0 !important;
 }
-/* over the door card the cursor IS the click prompt */
+/* over the door card the cursor IS the click prompt, centered on the pointer */
 .cursor-tag {
   display: none;
 }
 .cursor.tag {
   mix-blend-mode: normal;
-  transform: translate(14px, 18px);
 }
-.cursor.tag svg {
+.cursor.tag svg,
+.cursor.tag .cursor-dot {
   display: none;
 }
 .cursor.tag .cursor-tag {
   display: block;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
   background: var(--ink);
   color: var(--cream);
   font-size: 11px;

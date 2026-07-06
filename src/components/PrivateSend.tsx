@@ -159,14 +159,24 @@ export default function PrivateSend() {
       octx.lineWidth = Math.max(1, R * 0.045);
       octx.strokeStyle = "rgba(90, 70, 20, 0.3)";
       octx.stroke();
-      // embossed glyph, squashed with the face
+      // two faces so the rotation reads: glyph on the front, $ on the back
+      // (the back is mirrored, like a real coin turning over)
       octx.save();
-      octx.scale(rx / R, 1);
-      const s = (R * 1.06) / 256;
-      octx.translate(-R * 0.53, -R * 0.53);
-      octx.scale(s, s);
-      octx.fillStyle = "rgba(80, 60, 16, 0.8)";
-      octx.fill(glyph);
+      if (c >= 0) {
+        octx.scale(rx / R, 1);
+        const s = (R * 1.06) / 256;
+        octx.translate(-R * 0.53, -R * 0.53);
+        octx.scale(s, s);
+        octx.fillStyle = "rgba(80, 60, 16, 0.8)";
+        octx.fill(glyph);
+      } else {
+        octx.scale(-rx / R, 1);
+        octx.font = `800 ${Math.round(R * 1.3)}px "Hanken Grotesk", sans-serif`;
+        octx.textAlign = "center";
+        octx.textBaseline = "middle";
+        octx.fillStyle = "rgba(80, 60, 16, 0.8)";
+        octx.fillText("$", 0, R * 0.06);
+      }
       octx.restore();
       // specular sweep
       octx.beginPath();
