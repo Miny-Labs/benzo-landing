@@ -46,16 +46,18 @@ export default function App() {
       // the cipher mosaic: chunky ink cells, sparse at the top and solid at
       // the edge, dithered by the site's usual hash. Drawn at grid resolution
       // and upscaled with pixelated rendering, so cells stay crisp.
-      const drawApron = () => {
+      const drawApron = (seed = 0) => {
         if (!apron || !apronCv) return;
         const CELL = Math.max(34, Math.round(window.innerWidth / 30));
         const cols = Math.ceil(window.innerWidth / CELL);
         const ROWS = 9;
-        apronCv.width = cols;
-        apronCv.height = ROWS;
-        const H = ROWS * CELL;
-        apron.style.top = `${-(H - 2)}px`;
-        apron.style.height = `${H}px`;
+        if (apronCv.width !== cols || apronCv.height !== ROWS) {
+          apronCv.width = cols;
+          apronCv.height = ROWS;
+          const H = ROWS * CELL;
+          apron.style.top = `${-(H - 2)}px`;
+          apron.style.height = `${H}px`;
+        }
         const ctx = apronCv.getContext("2d");
         if (!ctx) return;
         const ink = getComputedStyle(document.documentElement).getPropertyValue("--panel").trim() || "#1a2030";
@@ -68,7 +70,8 @@ export default function App() {
           const d = (y + 1) / ROWS;
           const dd = d * d;
           for (let x = 0; x < cols; x++) {
-            const r = hash(x, y);
+            // the seed churns the dither so the edge lives like the sky filter
+            const r = hash(x + seed * 13.7, y + seed * 7.3);
             if (r < dd) {
               ctx.globalAlpha = 1;
               ctx.fillStyle = ink;
@@ -86,6 +89,7 @@ export default function App() {
         }
         ctx.globalAlpha = 1;
       };
+      let apronStep = -1;
       const wrap = wrapRef.current!;
       const info = infoRef.current!;
       const footer = footerRef.current!;
@@ -172,6 +176,14 @@ export default function App() {
         if (apron) {
           apron.style.transform = `translate3d(0, ${panelY}px, 0)`;
           apron.style.opacity = String(Math.min(1, y / (vh * 0.28)));
+          // while the edge is on screen the dither churns in ~8 fps steps
+          if (!reduced && y > 0 && y < vh * 1.2) {
+            const step = Math.floor(performance.now() / 130);
+            if (step !== apronStep) {
+              apronStep = step;
+              drawApron(step);
+            }
+          }
         }
 
         // The sky is fully covered after the first viewport — stop compositing it.

@@ -265,32 +265,35 @@ body {
 .avax-mark:focus-visible .avax-mark__cut {
   transform: scale(2);
 }
-/* the explorer prompt flies in from the triangle's bottom-left corner and
-   parks on the left slope — anchored at the corner, moving in the rotated
-   (slope-aligned) frame so entry and exit both travel the edge */
-.l-hover {
+/* the explorer prompt emerges FROM the triangle's bottom-left corner: a
+   slope-aligned clipping window starts at the corner, and the text slides
+   within it — nothing ever shows below/before the corner */
+.l-clip {
   position: absolute;
-  width: 120px;
-  right: 7px;
-  top: 101px;
-  opacity: 0;
+  width: 136px;
+  height: 36px;
+  right: 5px;
+  top: 100px;
+  overflow: hidden;
+  transform-origin: 0 100%;
+  transform: rotate(-62deg) translateY(-22px);
+  pointer-events: none;
+}
+.l-hover {
+  display: block;
   white-space: nowrap;
   font-size: 9.5px;
   letter-spacing: 0.14em;
+  line-height: 36px;
   text-transform: uppercase;
   font-weight: 800;
   color: #e84142;
-  transform-origin: 0 100%;
-  transform: rotate(-62deg) translate(-96px, -8px);
-  transition:
-    opacity 0.28s ease,
-    transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
-  pointer-events: none;
+  transform: translateX(-112%);
+  transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
 }
 .avax-mark:hover .l-hover,
 .avax-mark:focus-visible .l-hover {
-  opacity: 1;
-  transform: rotate(-62deg) translate(12px, -8px);
+  transform: translateX(8px);
 }
 .avax-mark__cut {
   display: block;
