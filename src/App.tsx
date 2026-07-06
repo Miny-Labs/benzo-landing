@@ -40,6 +40,52 @@ export default function App() {
       const stage = stageRef.current!;
       const panel = panelRef.current!;
       const apron = document.getElementById("vault-apron");
+      const apronCv = apron?.querySelector("canvas") ?? null;
+
+      // The vault's leading edge dissolves the sky in the same currency as
+      // the cipher mosaic: chunky ink cells, sparse at the top and solid at
+      // the edge, dithered by the site's usual hash. Drawn at grid resolution
+      // and upscaled with pixelated rendering, so cells stay crisp.
+      const drawApron = () => {
+        if (!apron || !apronCv) return;
+        const CELL = Math.max(34, Math.round(window.innerWidth / 30));
+        const cols = Math.ceil(window.innerWidth / CELL);
+        const ROWS = 9;
+        apronCv.width = cols;
+        apronCv.height = ROWS;
+        const H = ROWS * CELL;
+        apron.style.top = `${-(H - 2)}px`;
+        apron.style.height = `${H}px`;
+        const ctx = apronCv.getContext("2d");
+        if (!ctx) return;
+        const ink = getComputedStyle(document.documentElement).getPropertyValue("--panel").trim() || "#1a2030";
+        const hash = (a: number, b: number) => {
+          const s = Math.sin(a * 127.1 + b * 311.7) * 43758.5453;
+          return s - Math.floor(s);
+        };
+        ctx.clearRect(0, 0, cols, ROWS);
+        for (let y = 0; y < ROWS; y++) {
+          const d = (y + 1) / ROWS;
+          const dd = d * d;
+          for (let x = 0; x < cols; x++) {
+            const r = hash(x, y);
+            if (r < dd) {
+              ctx.globalAlpha = 1;
+              ctx.fillStyle = ink;
+            } else if (r < dd + 0.16) {
+              ctx.globalAlpha = 0.45;
+              ctx.fillStyle = ink;
+            } else if (r > 0.985) {
+              ctx.globalAlpha = 0.35 * d;
+              ctx.fillStyle = "oklch(0.55 0.18 292)";
+            } else {
+              continue;
+            }
+            ctx.fillRect(x, y, 1, 1);
+          }
+        }
+        ctx.globalAlpha = 1;
+      };
       const wrap = wrapRef.current!;
       const info = infoRef.current!;
       const footer = footerRef.current!;
@@ -70,6 +116,7 @@ export default function App() {
         vh = window.innerHeight;
         maxScroll = Math.max(0, wrap.scrollHeight - vh);
         spacer.style.height = `${vh + maxScroll + 2 * vh}px`;
+        drawApron();
         cards = Array.from(wrap.querySelectorAll<HTMLElement>(".bp-card")).map((el) => ({
           el,
           top: topWithin(el, wrap),
@@ -220,7 +267,9 @@ export default function App() {
         <main>
         <h1 className="sr-only">Benzo: private USDC payments on Avalanche</h1>
         <VideoStage ref={stageRef} />
-        <div id="vault-apron" className="vault-apron" aria-hidden="true" />
+        <div id="vault-apron" className="vault-apron" aria-hidden="true">
+          <canvas />
+        </div>
         <GalleryPanel ref={panelRef} wrapRef={wrapRef} />
         <StepHoverImages />
         <SiteFooter ref={footerRef} />

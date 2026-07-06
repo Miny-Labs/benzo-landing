@@ -239,51 +239,58 @@ body {
 .avax-mark__label {
   white-space: nowrap;
   padding-right: 16px;
+  overflow: hidden;
   font-size: 11.5px;
   letter-spacing: 0.18em;
   text-transform: uppercase;
   font-weight: 800;
   color: oklch(0.28 0.03 262 / 0.85);
 }
+/* the credit lives inside the logo: hover swallows it, unhover lets it
+   fly back out of the A */
 .avax-mark__label .l-rest {
   display: block;
   transition:
-    opacity 0.28s ease,
-    transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+    opacity 0.3s ease,
+    transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
 }
 .avax-mark:hover .l-rest,
 .avax-mark:focus-visible .l-rest {
   opacity: 0;
-  transform: translateY(-7px);
+  transform: translateX(46px);
 }
 /* on hover the A grows half again, pinned at its top-right corner so it
-   expands down the diagonal into open sky — and the explorer prompt rides
-   the triangle's left slope */
+   expands down the diagonal into open sky */
 .avax-mark:hover .avax-mark__cut,
 .avax-mark:focus-visible .avax-mark__cut {
   transform: scale(1.5);
 }
+/* the explorer prompt flies in from the triangle's bottom-left corner and
+   parks on the left slope — anchored at the corner, moving in the rotated
+   (slope-aligned) frame so entry and exit both travel the edge */
 .l-hover {
   position: absolute;
-  right: 94px;
-  top: 34px;
+  width: 120px;
+  right: -25px;
+  top: 71px;
   opacity: 0;
   white-space: nowrap;
-  font-size: 10.5px;
-  letter-spacing: 0.2em;
+  font-size: 9px;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   font-weight: 800;
   color: var(--violet);
-  transform: translate(50%, -50%) rotate(-62deg) translateY(6px);
+  transform-origin: 0 100%;
+  transform: rotate(-62deg) translate(-84px, -7px);
   transition:
-    opacity 0.3s ease 0.08s,
-    transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+    opacity 0.28s ease,
+    transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
   pointer-events: none;
 }
 .avax-mark:hover .l-hover,
 .avax-mark:focus-visible .l-hover {
   opacity: 1;
-  transform: translate(50%, -50%) rotate(-62deg) translateY(0);
+  transform: rotate(-62deg) translate(7px, -7px);
 }
 .avax-mark__cut {
   display: block;
@@ -450,46 +457,26 @@ body {
   transform: translateY(100vh);
   will-change: transform;
 }
-/* dusk apron: a tall eased gradient riding the vault's top edge, so the
-   sky falls through violet twilight into ink instead of hitting a hard
-   line. The ticker moves it with the panel and fades it in with scroll. */
+/* pixel apron: the vault's leading edge dissolves the sky into dithered
+   ink cells — same low-res cipher language as the sky filter. The canvas
+   is drawn at grid resolution and upscaled crisp; the ticker moves it
+   with the panel and fades it in with scroll. */
 .vault-apron {
   position: fixed;
   left: 0;
   right: 0;
   top: -54vh;
-  height: calc(54vh + 2px);
+  height: 54vh;
   z-index: 9;
   pointer-events: none;
   opacity: 0;
   will-change: transform, opacity;
 }
-.vault-apron::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    to bottom,
-    oklch(0.235 0.032 262 / 0) 0%,
-    oklch(0.24 0.05 285 / 0.04) 14%,
-    oklch(0.245 0.06 288 / 0.13) 30%,
-    oklch(0.24 0.06 290 / 0.29) 46%,
-    oklch(0.235 0.055 288 / 0.52) 62%,
-    oklch(0.23 0.045 278 / 0.75) 77%,
-    oklch(0.235 0.036 268 / 0.93) 90%,
-    var(--panel) 100%
-  );
-}
-/* grain dither masked to the same ramp — no banding over the video */
-.vault-apron::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/></svg>");
-  mix-blend-mode: soft-light;
-  opacity: 0.5;
-  mask-image: linear-gradient(to bottom, transparent 4%, rgb(0 0 0 / 0.55) 45%, #000 82%);
-  -webkit-mask-image: linear-gradient(to bottom, transparent 4%, rgb(0 0 0 / 0.55) 45%, #000 82%);
+.vault-apron canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
 }
 .vault-wrap {
   position: relative;
