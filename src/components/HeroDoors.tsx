@@ -14,7 +14,7 @@ const CONTENT = {
       "Cash in, cash out, split anything",
       "Every payment gets a provable receipt",
     ],
-    cta: "Click the card to open the wallet",
+    cta: "Click to open the wallet",
   },
   business: {
     kicker: "For your team",
@@ -25,7 +25,7 @@ const CONTENT = {
       "Treasury with totals you can prove",
       "Give auditors exactly what they need",
     ],
-    cta: "Click the card to open the console",
+    cta: "Click to open the console",
   },
 } as const;
 type DoorKey = keyof typeof CONTENT;
@@ -104,19 +104,23 @@ export default function HeroDoors() {
     if (card && !reduced && window.matchMedia("(pointer: fine)").matches) {
       const BX = 9;
       const BY = -8; // resting pose, mirrors the CSS transform
-      gsap.set(card, { rotationX: BX, rotationY: BY });
+      gsap.set(card, { rotationX: BX, rotationY: BY, "--shine": 0 });
       const rx = gsap.quickTo(card, "rotationX", { duration: 0.5, ease: "power3.out" });
       const ry = gsap.quickTo(card, "rotationY", { duration: 0.5, ease: "power3.out" });
+      // the gloss band slides opposite the tilt, like light moving on plastic
+      const sh = gsap.quickTo(card, "--shine", { duration: 0.5, ease: "power3.out" });
       const onTilt = (e: MouseEvent) => {
         const r = root.getBoundingClientRect();
         const nx = (e.clientX - r.left) / r.width - 0.5;
         const ny = (e.clientY - r.top) / r.height - 0.5;
         rx(BX + ny * 14);
         ry(BY - nx * 16);
+        sh(-(nx + ny * 0.4) * 34);
       };
       const onRest = () => {
         rx(BX);
         ry(BY);
+        sh(0);
       };
       root.addEventListener("mousemove", onTilt);
       root.addEventListener("mouseleave", onRest);
@@ -262,7 +266,7 @@ export default function HeroDoors() {
           </a>
         </div>
         <span className={`door-cta${active ? " on" : ""}`} aria-hidden="true">
-          {content.cta} <span className="dp-cta-arrow">↗</span>
+          {content.cta}
         </span>
         <a className="door-mobile display" href={WALLET_URL}>
           Open the wallet <span aria-hidden="true">↗</span>

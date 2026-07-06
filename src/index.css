@@ -962,7 +962,7 @@ body {
 .doors-card::after {
   content: "";
   position: absolute;
-  inset: 0;
+  inset: -8% -30%;
   z-index: 3;
   pointer-events: none;
   background: linear-gradient(
@@ -972,6 +972,8 @@ body {
     oklch(1 0 0 / 0.04) 56%,
     transparent 63%
   );
+  /* --shine is driven by the tilt handler; the band slides like caught light */
+  transform: translateX(calc(var(--shine, 0) * 1%));
 }
 .kit {
   position: absolute;
@@ -1051,17 +1053,31 @@ body {
   letter-spacing: -0.02em;
   line-height: 1;
 }
+/* the personal brand sits clear of the resting seam so it's never sliced */
 .tri-p .card-brand {
+  right: 64px;
   color: oklch(0.32 0.06 292 / 0.8);
 }
 .tri-b .card-brand {
   color: oklch(0.965 0.007 106 / 0.85);
 }
+/* the business face's furniture only exists once that side is open —
+   at rest, fragments of it would peek through the seam */
+.tri-b .card-brand,
+.kit-b {
+  opacity: 0;
+}
+@media (pointer: fine) {
+  .doors:has(.tri-b:hover) .tri-b .card-brand,
+  .doors:has(.tri-b:hover) .kit-b {
+    opacity: 1;
+  }
+}
 /* the click prompt sits under the card and fades in with either panel */
 .door-cta {
   position: absolute;
   top: calc(100% + 16px);
-  left: 2px;
+  left: 50%;
   font-size: 11.5px;
   letter-spacing: 0.16em;
   text-transform: uppercase;
@@ -1069,7 +1085,7 @@ body {
   white-space: nowrap;
   color: var(--violet);
   opacity: 0;
-  transform: translateY(4px);
+  transform: translate(-50%, 4px);
   transition:
     opacity 0.25s ease,
     transform 0.25s ease;
@@ -1077,7 +1093,7 @@ body {
 }
 .door-cta.on {
   opacity: 1;
-  transform: none;
+  transform: translate(-50%, 0);
 }
 /* phones get one door: a single wallet button instead of the card */
 .door-mobile {
@@ -1203,24 +1219,6 @@ body {
   font-size: 15.5px;
   font-weight: 600;
   line-height: 1.45;
-}
-.dp-cta-arrow {
-  display: inline-block;
-  animation: dpNudge 1.5s ease-in-out infinite;
-}
-@keyframes dpNudge {
-  0%,
-  100% {
-    transform: translate(0, 0);
-  }
-  50% {
-    transform: translate(3px, -3px);
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .dp-cta-arrow {
-    animation: none;
-  }
 }
 .dp-dash {
   color: var(--violet);
