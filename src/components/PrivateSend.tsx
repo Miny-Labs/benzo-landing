@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
+import { GLYPH_PATH } from "../lib/config";
 
 const HEX = "0123456789abcdef";
 const SCRAMBLE = "█▓▒░•§#%¤";
@@ -23,14 +24,13 @@ const fmt = (v: number) => `$${Math.round(v).toLocaleString("en-US")}`;
  */
 export default function PrivateSend() {
   const rootRef = useRef<HTMLDivElement>(null);
+  const coinRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
     const root = rootRef.current!;
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const q = gsap.utils.selector(root);
     const packet = q(".packet")[0] as HTMLElement;
-    const note = q(".packet-note")[0] as HTMLElement;
-    const cipherFace = q(".packet-cipher")[0] as HTMLElement;
     const track = q(".rail-track")[0] as HTMLElement;
     const netcap = q(".rail-cipher")[0] as HTMLElement;
     const sendline = q(".psending")[0] as HTMLElement;
@@ -96,6 +96,109 @@ export default function PrivateSend() {
     let tl: gsap.core.Timeline | null = null;
     let scrambleAt = 0;
 
+    // — the coin: a fake-3D gold disc on canvas. Materialize/dissolve and
+    // glitch amounts are tweened INSIDE the scrubbed timeline (so they run
+    // backward with scroll); only the spin is ambient wall-clock, like the
+    // rail's flowing stripes. —
+    const coin = coinRef.current!;
+    const cctx = coin.getContext("2d")!;
+    const off = document.createElement("canvas");
+    const octx = off.getContext("2d")!;
+    const glyph = new Path2D(GLYPH_PATH);
+    const fx = { mat: 0, glitch: 0 };
+    // deterministic per-cell hash so pixels materialize in a stable order
+    const cellH = (a: number, b: number) => {
+      const s = Math.sin(a * 127.1 + b * 311.7) * 43758.5453;
+      return s - Math.floor(s);
+    };
+    const sizeCoin = () => {
+      const px = packet.offsetWidth || 46;
+      const dpr = Math.min(2, window.devicePixelRatio || 1);
+      coin.width = off.width = Math.round(px * dpr);
+      coin.height = off.height = Math.round(px * dpr);
+    };
+    const drawCoin = (now: number, travelP: number) => {
+      const W = coin.width;
+      const H = coin.height;
+      cctx.clearRect(0, 0, W, H);
+      if (fx.mat <= 0.002 || W === 0) return;
+
+      // face pass: spinning disc with the glyph, gold like the card's chip
+      octx.clearRect(0, 0, W, H);
+      const R = W * 0.44;
+      const th = now * 2.6 + travelP * 7;
+      const c = Math.cos(th);
+      const rx = Math.max(R * 0.1, R * Math.abs(c));
+      octx.save();
+      octx.translate(W / 2, H / 2);
+      const g = octx.createLinearGradient(-rx, 0, rx, 0);
+      g.addColorStop(0, c >= 0 ? "#e8cf8a" : "#caa652");
+      g.addColorStop(0.5, "#c9a24f");
+      g.addColorStop(1, c >= 0 ? "#b98f3e" : "#e3c87f");
+      octx.fillStyle = g;
+      octx.beginPath();
+      octx.ellipse(0, 0, rx, R, 0, 0, Math.PI * 2);
+      octx.fill();
+      octx.lineWidth = Math.max(1.5, R * 0.1);
+      octx.strokeStyle = "rgba(90, 70, 20, 0.55)";
+      octx.stroke();
+      octx.beginPath();
+      octx.ellipse(0, 0, rx * 0.76, R * 0.76, 0, 0, Math.PI * 2);
+      octx.lineWidth = Math.max(1, R * 0.045);
+      octx.strokeStyle = "rgba(90, 70, 20, 0.3)";
+      octx.stroke();
+      // embossed glyph, squashed with the face
+      octx.save();
+      octx.scale(rx / R, 1);
+      const s = (R * 1.06) / 256;
+      octx.translate(-R * 0.53, -R * 0.53);
+      octx.scale(s, s);
+      octx.fillStyle = "rgba(80, 60, 16, 0.8)";
+      octx.fill(glyph);
+      octx.restore();
+      // specular sweep
+      octx.beginPath();
+      octx.ellipse(-rx * 0.3, -R * 0.38, rx * 0.5, R * 0.26, -0.5, 0, Math.PI * 2);
+      octx.fillStyle = "rgba(255, 255, 255, 0.2)";
+      octx.fill();
+      octx.restore();
+
+      // pixel pass: cells appear/disappear in hash order as mat scrubs 0↔1
+      if (fx.mat >= 0.998) {
+        cctx.drawImage(off, 0, 0);
+      } else {
+        const cell = Math.max(3, Math.round(W / 11));
+        for (let y = 0; y < H; y += cell) {
+          for (let x = 0; x < W; x += cell) {
+            if (cellH(x / cell, y / cell) < fx.mat) {
+              cctx.drawImage(off, x, y, cell, cell, x, y, cell, cell);
+            }
+          }
+        }
+      }
+
+      // glitch pass: twitchy band tears + a red echo while on the wire
+      if (fx.glitch > 0.05) {
+        const step = Math.floor(now * 11);
+        if (cellH(step, 7) < 0.55) {
+          const bandY = Math.floor(cellH(step, 3) * H * 0.8);
+          const bandH = Math.max(2, Math.round(H * 0.16));
+          const dx = (cellH(step, 5) - 0.5) * W * 0.26 * fx.glitch;
+          cctx.drawImage(coin, 0, bandY, W, bandH, dx, bandY, W, bandH);
+          cctx.save();
+          cctx.globalCompositeOperation = "source-atop";
+          cctx.globalAlpha = 0.3 * fx.glitch;
+          cctx.fillStyle = "#e84142";
+          cctx.fillRect(0, bandY, W, bandH);
+          cctx.restore();
+        }
+        cctx.save();
+        cctx.globalAlpha = 0.18 * fx.glitch;
+        cctx.drawImage(off, W * 0.05, 0);
+        cctx.restore();
+      }
+    };
+
     // film mode: on phones each act gets its own screen — sender, network,
     // receiver — crossfaded by the same scrubbed timeline
     const vYou = q(".pcard-you")[0] as HTMLElement;
@@ -118,9 +221,10 @@ export default function PrivateSend() {
         }
       }
       tl?.kill();
-      gsap.set(packet, { x: 0, y: 0, scale: 0, opacity: 1, clearProps: "backgroundColor" });
-      gsap.set(note, { opacity: 1 });
-      gsap.set(cipherFace, { opacity: 0 });
+      gsap.set(packet, { x: 0, y: 0 });
+      fx.mat = 0;
+      fx.glitch = 0;
+      sizeCoin();
       gsap.set([plus, receipt], { opacity: 0, y: 6 });
       gsap.set(sendline, { opacity: 0 });
 
@@ -134,14 +238,16 @@ export default function PrivateSend() {
       tl = gsap
         .timeline({ paused: true })
         .to(sendline, { opacity: 1, duration: 0.4 })
-        .to(packet, { scale: 1, duration: 0.35, ease: "power3.out" }, "+=0.2")
-        .addLabel("flightStart", "+=0.25")
-        .to(note, { opacity: 0, duration: 0.2 }, "flightStart")
-        .to(cipherFace, { opacity: 1, duration: 0.2 }, "flightStart")
-        .to(packet, { backgroundColor: "#1a2135", duration: 0.25 }, "flightStart")
+        // the coin materializes pixel by pixel…
+        .to(fx, { mat: 1, duration: 0.4, ease: "power1.inOut" }, "+=0.2")
+        .addLabel("flightStart", "+=0.2")
+        // …glitches while it rides the wire…
+        .to(fx, { glitch: 1, duration: 0.35 }, "flightStart")
         .to(packet, { ...travel, duration: 1.7, ease: "power1.inOut" }, "flightStart")
+        .to(fx, { glitch: 0, duration: 0.3 }, ">-0.3")
         .addLabel("flightEnd")
-        .to(packet, { scale: 0, opacity: 0, duration: 0.3, ease: "power2.in" })
+        // …and dissolves back into pixels on arrival
+        .to(fx, { mat: 0, duration: 0.35, ease: "power1.in" })
         .addLabel("reveal")
         .to(plus, { opacity: 1, y: 0, duration: 0.45, ease: "power3.out" }, "<+=0.1")
         .to(state, { bal: BASE + AMOUNT, duration: 0.6, ease: "power2.out" }, "<")
@@ -163,6 +269,8 @@ export default function PrivateSend() {
 
       const t = tl.time();
       const L = tl.labels;
+      const flightSpan = Math.max(0.001, L.flightEnd - L.flightStart);
+      drawCoin(performance.now() / 1000, Math.max(0, Math.min(1, (t - L.flightStart) / flightSpan)));
       // in film mode the sender encrypts as its screen starts to hand off,
       // so the scramble is still on screen when the money departs
       const senderClear = t < L.flightStart - (film ? 2 * XFADE : 0);
@@ -242,8 +350,7 @@ export default function PrivateSend() {
               />
             </svg>
             <div className="packet">
-              <span className="packet-face packet-note tnum">$120</span>
-              <span className="packet-face packet-cipher">••••</span>
+              <canvas ref={coinRef} className="coin" aria-hidden="true" />
             </div>
           </div>
           <div className="rail-caption">
