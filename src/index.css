@@ -240,15 +240,16 @@ body {
   }
 }
 
-/* private balance: the proof object, anchored to the right column (up and
-   away from the flowers so the reveal never fights the illustration) */
+/* private balance: the proof object, sharing the hover panel's column —
+   both rails start at 66vw so panel text and balance left-align */
 .balance {
-  right: 130px;
+  left: 66vw;
+  right: auto;
   bottom: 160px;
   width: 330px;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
 }
 .balance .amount {
   pointer-events: auto;
@@ -283,14 +284,14 @@ body {
   width: 100%;
   font-size: 30px;
   line-height: 1;
-  text-align: center;
+  text-align: left;
   letter-spacing: -0.02em;
   text-transform: uppercase;
 }
 .balance .amount {
   font-size: 80px;
   line-height: 1;
-  text-align: center;
+  text-align: left;
   letter-spacing: 0.02em;
   margin-top: 14px;
 }
@@ -300,6 +301,11 @@ body {
     right: 0;
     bottom: 56px;
     width: auto;
+    align-items: center;
+  }
+  .balance .label,
+  .balance .amount {
+    text-align: center;
   }
   .balance .head {
     width: 252px;
