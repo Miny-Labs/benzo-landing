@@ -82,10 +82,12 @@ function AvaxMark() {
     >
       <span className="avax-mark__label" aria-hidden="true">
         <span className="l-rest">Private L1 on Avalanche</span>
-        <span className="l-hover">View explorer</span>
       </span>
       <span className="avax-mark__cut">
         {!reduced && <video ref={vidRef} src={AVAX_VID(AVAX_QUEUE[0])} autoPlay muted playsInline />}
+      </span>
+      <span className="l-hover" aria-hidden="true">
+        View explorer
       </span>
     </a>
   );
