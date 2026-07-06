@@ -39,6 +39,7 @@ export default function App() {
       const spacer = spacerRef.current!;
       const stage = stageRef.current!;
       const panel = panelRef.current!;
+      const apron = document.getElementById("vault-apron");
       const wrap = wrapRef.current!;
       const info = infoRef.current!;
       const footer = footerRef.current!;
@@ -117,6 +118,14 @@ export default function App() {
         const panelY = Math.max(0, vh - y);
         const wrapY = -Math.max(0, y - vh);
         wrap.style.transform = `translate3d(0, ${wrapY}px, 0)`;
+
+        // The dusk apron rides the vault's leading edge: the sky passes
+        // through a violet twilight before it lands in ink. Fades in with
+        // the first scroll so the hero stays untinted at rest.
+        if (apron) {
+          apron.style.transform = `translate3d(0, ${panelY}px, 0)`;
+          apron.style.opacity = String(Math.min(1, y / (vh * 0.28)));
+        }
 
         // The sky is fully covered after the first viewport — stop compositing it.
         stage.style.visibility = y >= vh ? "hidden" : "visible";
@@ -211,6 +220,7 @@ export default function App() {
         <main>
         <h1 className="sr-only">Benzo: private USDC payments on Avalanche</h1>
         <VideoStage ref={stageRef} />
+        <div id="vault-apron" className="vault-apron" aria-hidden="true" />
         <GalleryPanel ref={panelRef} wrapRef={wrapRef} />
         <StepHoverImages />
         <SiteFooter ref={footerRef} />
