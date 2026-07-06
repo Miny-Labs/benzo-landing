@@ -14,7 +14,6 @@ const CONTENT = {
       "Cash in, cash out, split anything",
       "Every payment gets a provable receipt",
     ],
-    cta: "Click to open the wallet",
   },
   business: {
     kicker: "For your team",
@@ -25,7 +24,6 @@ const CONTENT = {
       "Treasury with totals you can prove",
       "Give auditors exactly what they need",
     ],
-    cta: "Click to open the console",
   },
 } as const;
 type DoorKey = keyof typeof CONTENT;
@@ -273,9 +271,6 @@ export default function HeroDoors() {
             </span>
           </a>
         </div>
-        <span className={`door-cta${active ? " on" : ""}`} aria-hidden="true">
-          {content.cta}
-        </span>
         <a className="door-mobile display" href={WALLET_URL}>
           Open the wallet <span aria-hidden="true">↗</span>
         </a>

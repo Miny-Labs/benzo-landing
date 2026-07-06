@@ -125,12 +125,24 @@ export default function PrivateSend() {
 
       // face pass: spinning disc with the glyph, gold like the card's chip
       octx.clearRect(0, 0, W, H);
-      const R = W * 0.44;
+      const R = W * 0.42;
       const th = now * 2.6 + travelP * 7;
       const c = Math.cos(th);
+      const sN = Math.sin(th);
       const rx = Math.max(R * 0.1, R * Math.abs(c));
+      const dir = sN >= 0 ? 1 : -1;
+      const d = R * 0.38 * Math.abs(sN); // projected thickness
       octx.save();
       octx.translate(W / 2, H / 2);
+      // reeded edge: stacked ellipses from the back face forward
+      const steps = Math.max(1, Math.round(d));
+      for (let i = steps; i >= 0; i--) {
+        octx.beginPath();
+        octx.ellipse(dir * (d / 2 - i), 0, rx, R, 0, 0, Math.PI * 2);
+        octx.fillStyle = i % 4 < 2 ? "#8a682a" : "#aa862f";
+        octx.fill();
+      }
+      octx.translate(dir * (d / 2), 0);
       const g = octx.createLinearGradient(-rx, 0, rx, 0);
       g.addColorStop(0, c >= 0 ? "#e8cf8a" : "#caa652");
       g.addColorStop(0.5, "#c9a24f");
