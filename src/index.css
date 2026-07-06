@@ -244,7 +244,7 @@ body {
   letter-spacing: 0.18em;
   text-transform: uppercase;
   font-weight: 800;
-  color: oklch(0.28 0.03 262 / 0.85);
+  color: #e84142;
 }
 /* the credit lives inside the logo: hover swallows it, unhover lets it
    fly back out of the A */
@@ -259,11 +259,11 @@ body {
   opacity: 0;
   transform: translateX(46px);
 }
-/* on hover the A grows half again, pinned at its top-right corner so it
-   expands down the diagonal into open sky */
+/* on hover the A doubles, pinned at its top-right corner so it expands
+   down the diagonal into open sky */
 .avax-mark:hover .avax-mark__cut,
 .avax-mark:focus-visible .avax-mark__cut {
-  transform: scale(1.5);
+  transform: scale(2);
 }
 /* the explorer prompt flies in from the triangle's bottom-left corner and
    parks on the left slope — anchored at the corner, moving in the rotated
@@ -271,17 +271,17 @@ body {
 .l-hover {
   position: absolute;
   width: 120px;
-  right: -25px;
-  top: 71px;
+  right: 7px;
+  top: 101px;
   opacity: 0;
   white-space: nowrap;
-  font-size: 9px;
-  letter-spacing: 0.12em;
+  font-size: 9.5px;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   font-weight: 800;
-  color: var(--violet);
+  color: #e84142;
   transform-origin: 0 100%;
-  transform: rotate(-62deg) translate(-84px, -7px);
+  transform: rotate(-62deg) translate(-96px, -8px);
   transition:
     opacity 0.28s ease,
     transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
@@ -290,7 +290,7 @@ body {
 .avax-mark:hover .l-hover,
 .avax-mark:focus-visible .l-hover {
   opacity: 1;
-  transform: rotate(-62deg) translate(7px, -7px);
+  transform: rotate(-62deg) translate(12px, -8px);
 }
 .avax-mark__cut {
   display: block;
