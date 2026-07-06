@@ -13,6 +13,8 @@ export const EXPLORER_URL = "https://testnet.snowtrace.io";
 
 /** Fired when a door CTA is clicked; TransitionWave listens and navigates. */
 export const LEAVE_EVENT = "benzo:leave";
+/** fired by the door card so the balance uncensors while either side is hovered */
+export const BALANCE_EVENT = "benzo:balance";
 
 /** The hero cover line. */
 export const HEADLINE = "Private like cash. Fast like crypto.";

@@ -1,7 +1,7 @@
 import { forwardRef, useEffect, useRef } from "react";
 import { motion } from "motion/react";
 import HeroDoors from "./HeroDoors";
-import { EXPLORER_URL, GLYPH_PATH, HEADLINE, SOCIALS } from "../lib/config";
+import { BALANCE_EVENT, EXPLORER_URL, GLYPH_PATH, HEADLINE, SOCIALS } from "../lib/config";
 
 const EASE = [0.25, 0.1, 0.25, 1] as const;
 // When the page loads already scrolled (reload mid-page, bfcache), skip entry
@@ -105,23 +105,32 @@ export const BalanceInfo = forwardRef<HTMLDivElement, { symbolRef: React.Ref<HTM
       };
 
       const reveal = () => {
+        if (shown) return;
         shown = true;
         scrambleTo(REVEALED);
       };
       const hide = () => {
+        if (!shown) return;
         shown = false;
         scrambleTo(MASKED);
       };
       const toggle = () => (shown ? hide() : reveal());
+      // the door card broadcasts its hover so the balance uncensors with it
+      const onDoors = (e: Event) => {
+        if ((e as CustomEvent<{ show: boolean }>).detail?.show) reveal();
+        else hide();
+      };
 
       el.addEventListener("mouseenter", reveal);
       el.addEventListener("mouseleave", hide);
       el.addEventListener("touchstart", toggle, { passive: true });
+      window.addEventListener(BALANCE_EVENT, onDoors);
       return () => {
         if (timer) window.clearInterval(timer);
         el.removeEventListener("mouseenter", reveal);
         el.removeEventListener("mouseleave", hide);
         el.removeEventListener("touchstart", toggle);
+        window.removeEventListener(BALANCE_EVENT, onDoors);
       };
     }, []);
 

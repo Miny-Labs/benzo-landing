@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
-import { CONSOLE_URL, GLYPH_PATH, LEAVE_EVENT, WALLET_URL } from "../lib/config";
+import { BALANCE_EVENT, CONSOLE_URL, GLYPH_PATH, LEAVE_EVENT, WALLET_URL } from "../lib/config";
 
 const SCRAMBLE = "█▓▒░•§#%¤";
 
@@ -177,10 +177,12 @@ export default function HeroDoors() {
   const enter = (key: DoorKey) => () => {
     if (hideTimer.current) window.clearTimeout(hideTimer.current);
     setActive(key);
+    window.dispatchEvent(new CustomEvent(BALANCE_EVENT, { detail: { show: true } }));
   };
   const leave = () => {
     if (hideTimer.current) window.clearTimeout(hideTimer.current);
     hideTimer.current = window.setTimeout(() => setActive(null), 140);
+    window.dispatchEvent(new CustomEvent(BALANCE_EVENT, { detail: { show: false } }));
   };
 
   // the panel slot is reserved; content lingers through the fade-out
