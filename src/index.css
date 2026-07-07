@@ -1053,14 +1053,31 @@ body {
   pointer-events: auto;
   perspective: 1100px;
 }
-/* the card: rounded corners live here (clip-paths can't round), and a static
-   perspective tilt + layered shadows give it depth. It still never moves. */
+/* the 3D shell carries the tilt with preserve-3d, so the back slab sits a
+   few real pixels behind the face — the plastic gets thickness */
+.card3d {
+  position: absolute;
+  inset: 0;
+  transform: rotateX(9deg) rotateY(-8deg);
+  transform-style: preserve-3d;
+}
+.card-back {
+  position: absolute;
+  inset: 0;
+  border-radius: 16px;
+  transform: translateZ(-7px);
+  background: linear-gradient(135deg, oklch(0.56 0.05 292), oklch(0.3 0.03 275) 60%);
+  box-shadow: 0 26px 48px -20px oklch(0.25 0.06 292 / 0.5);
+}
+/* the card: rounded corners live here (clip-paths can't round; overflow
+   hidden also flattens 3D, which is why the slab lives outside).
+   It still never moves. */
 .doors-card {
   position: absolute;
   inset: 0;
   border-radius: 16px;
   overflow: hidden;
-  transform: rotateX(9deg) rotateY(-8deg);
+  transform: translateZ(0);
   box-shadow:
     inset 0 1px 0 oklch(1 0 0 / 0.35),
     0 26px 48px -20px oklch(0.25 0.06 292 / 0.5),
@@ -1319,7 +1336,7 @@ body {
     margin: 0;
     perspective: none;
   }
-  .doors-card {
+  .card3d {
     display: none;
   }
   .door-mobile {

@@ -104,7 +104,8 @@ export default function HeroDoors() {
 
     // the slab tilts toward whichever part the cursor is over — rotation only,
     // the card's footprint on the page never changes
-    const card = root.querySelector<HTMLElement>(".doors-card");
+    // the 3D shell carries the tilt so the back slab keeps its depth offset
+    const card = root.querySelector<HTMLElement>(".card3d");
     if (card && !reduced && window.matchMedia("(pointer: fine)").matches) {
       const BX = 9;
       const BY = -8; // resting pose, mirrors the CSS transform
@@ -196,7 +197,9 @@ export default function HeroDoors() {
   return (
     <>
       <div ref={rootRef} id="hero-ctas" className="doors" onMouseLeave={leave}>
-        <div className="doors-card">
+        <div className="card3d">
+          <span className="card-back" aria-hidden="true" />
+          <div className="doors-card">
           <a className="tri tri-p" href={WALLET_URL} onMouseEnter={enter("personal")} aria-label="Personal — open the wallet">
             <span className="t-label">
               <span className="t-word display">Personal</span>
@@ -258,6 +261,7 @@ export default function HeroDoors() {
               <span className="meta tnum">@yourco · 01/31</span>
             </span>
           </a>
+          </div>
         </div>
         <a className="door-mobile display" href={WALLET_URL}>
           Open the wallet <span aria-hidden="true">↗</span>
