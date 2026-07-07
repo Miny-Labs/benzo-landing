@@ -42,22 +42,18 @@ function getCols() {
 
 type Props = { wrapRef: React.Ref<HTMLDivElement> };
 
-/* the ghost numerals are drawn, not typed: blocky rectilinear digits in the
-   site's pixel language, with none of the font glyphs' concave notches */
-const DIGIT_PATHS: Record<string, string[]> = {
-  "0": ["M10,10 H90 V130 H10 Z", "M34,34 H66 V106 H34 Z"],
-  "1": ["M39,10 H61 V130 H39 Z"],
-  "2": ["M10,10 H90 V82 H34 V106 H90 V130 H10 V58 H66 V34 H10 Z"],
-  "3": ["M10,10 H90 V130 H10 V106 H66 V82 H10 V58 H66 V34 H10 Z"],
-};
-
+/* the ghost numerals are Roman: plain upright bars, drawn as outlines —
+   no curves, no font-glyph notches, just strokes in the pixel language */
 function Ghost({ num }: { num: string }) {
-  const digits = num.replace(/^0+/, "").split(""); // "01" reads as just "1" back there
+  const n = Math.max(1, parseInt(num, 10) || 1);
+  const BAR = 24;
+  const STEP = 52;
+  const width = (n - 1) * STEP + BAR + 20;
   return (
-    <svg className="ghost" viewBox={`0 0 ${digits.length * 120 - 20} 140`} aria-hidden="true">
-      {digits.map((d, i) =>
-        (DIGIT_PATHS[d] ?? []).map((p, j) => <path key={`${i}-${j}`} d={p} transform={`translate(${i * 120} 0)`} />),
-      )}
+    <svg className="ghost" viewBox={`0 0 ${width} 140`} aria-hidden="true">
+      {Array.from({ length: n }, (_, i) => (
+        <path key={i} d={`M${10 + i * STEP},10 H${10 + i * STEP + BAR} V130 H${10 + i * STEP} Z`} />
+      ))}
     </svg>
   );
 }
