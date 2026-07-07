@@ -9,7 +9,7 @@ export const SOCIALS = {
 };
 
 /** Avalanche Fuji testnet explorer; point at the pool contract once deployed. */
-export const EXPLORER_URL = "https://testnet.snowtrace.io";
+export const EXPLORER_URL = "https://explorer.benzo.space";
 
 /** Fired when a door CTA is clicked; TransitionWave listens and navigates. */
 export const LEAVE_EVENT = "benzo:leave";
