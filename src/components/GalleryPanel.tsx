@@ -42,6 +42,25 @@ function getCols() {
 
 type Props = { wrapRef: React.Ref<HTMLDivElement> };
 
+/* the ghost numerals are drawn, not typed: blocky rectilinear digits in the
+   site's pixel language, with none of the font glyphs' concave notches */
+const DIGIT_PATHS: Record<string, string[]> = {
+  "0": ["M10,10 H90 V130 H10 Z", "M34,34 H66 V106 H34 Z"],
+  "1": ["M39,10 H61 V130 H39 Z"],
+  "2": ["M10,10 H90 V82 H34 V106 H90 V130 H10 V58 H66 V34 H10 Z"],
+  "3": ["M10,10 H90 V130 H10 V106 H66 V82 H10 V58 H66 V34 H10 Z"],
+};
+
+function Ghost({ num }: { num: string }) {
+  return (
+    <svg className="ghost" viewBox="0 0 220 140" aria-hidden="true">
+      {num.split("").map((d, i) =>
+        (DIGIT_PATHS[d] ?? []).map((p, j) => <path key={`${i}-${j}`} d={p} transform={`translate(${i * 120} 0)`} />),
+      )}
+    </svg>
+  );
+}
+
 const STEPS = [
   {
     num: "01",
@@ -139,9 +158,7 @@ const GalleryPanel = forwardRef<HTMLDivElement, Props>(function GalleryPanel({ w
                       <span className="rule" />
                     </div>
                   )}
-                  <span className="ghost display" aria-hidden="true">
-                    {s.num}
-                  </span>
+                  <Ghost num={s.num} />
                   <h2 className="stage-verb display">{s.verb}</h2>
                   <p className="stage-sub">{s.sub}</p>
                 </div>

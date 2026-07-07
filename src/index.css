@@ -653,12 +653,16 @@ body {
   left: 50%;
   top: 50%;
   transform: translate(-50%, calc(-50% + (0.5 - var(--sp, 0.5)) * 12vh));
-  font-size: clamp(220px, 36vw, 580px);
-  line-height: 1;
-  color: transparent;
-  -webkit-text-stroke: 1.5px oklch(0.86 0.02 280 / 0.14);
+  height: clamp(240px, 34vw, 520px);
+  width: auto;
   pointer-events: none;
   user-select: none;
+}
+.stage-step .ghost path {
+  fill: none;
+  stroke: oklch(0.86 0.02 280 / 0.14);
+  stroke-width: 1.5;
+  vector-effect: non-scaling-stroke;
 }
 /* letter-spacing eases shut as the scene's scrub advances */
 .stage-verb {
