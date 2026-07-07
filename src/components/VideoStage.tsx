@@ -166,8 +166,8 @@ const VideoStage = forwardRef<HTMLDivElement>(function VideoStage(_props, outerR
 
   return (
     <div ref={outerRef} className="stage" style={{ opacity: ready ? 1 : 0 }} aria-hidden="true">
-      <video ref={fwdRef} src="/media/sky.mp4" poster="/media/sky-poster.jpg" muted playsInline preload="auto" />
-      <video ref={revRef} src="/media/sky-rev.mp4" muted playsInline preload="auto" style={{ display: "none" }} />
+      <video ref={fwdRef} src="/media/sky-v2.mp4" poster="/media/sky-v2-poster.jpg" muted playsInline preload="auto" />
+      <video ref={revRef} src="/media/sky-v2-rev.mp4" muted playsInline preload="auto" style={{ display: "none" }} />
       <canvas ref={cipherRef} className="cipher" />
       <div className="scrim" />
     </div>
