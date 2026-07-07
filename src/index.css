@@ -1156,6 +1156,32 @@ body {
     opacity: 1;
   }
 }
+/* a quiet invitation under the card; it steps aside once the hover begins */
+.door-hint {
+  position: absolute;
+  top: calc(100% + 16px);
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--ink);
+  opacity: 0.4;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+@media (pointer: fine) {
+  .doors:hover .door-hint {
+    opacity: 0;
+  }
+}
+@media (max-width: 639px) {
+  .door-hint {
+    display: none;
+  }
+}
 /* phones get one door: a single wallet button instead of the card */
 .door-mobile {
   display: none;

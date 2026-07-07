@@ -259,6 +259,9 @@ export default function HeroDoors() {
             </span>
           </a>
         </div>
+        <span className="door-hint" aria-hidden="true">
+          Hover to open
+        </span>
         <a className="door-mobile display" href={WALLET_URL}>
           Open the wallet <span aria-hidden="true">↗</span>
         </a>
