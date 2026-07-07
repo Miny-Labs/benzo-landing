@@ -51,12 +51,12 @@ const STEPS = [
   {
     num: "02",
     verb: "Send it quietly.",
-    sub: "Pay an @handle like you'd text a friend — payroll and invoices too. The amount stays between the two of you.",
+    sub: "Pay an @handle like you'd text a friend, payroll and invoices too. The amount stays between the two of you.",
   },
   {
     num: "03",
     verb: "Prove what you choose.",
-    sub: "Show someone a single payment or balance — a proof reveals just that number. Everything else stays sealed.",
+    sub: "Show someone a single payment or balance. A proof reveals just that number, and everything else stays sealed.",
   },
 ];
 

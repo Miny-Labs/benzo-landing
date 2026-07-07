@@ -90,7 +90,7 @@ function AvaxMark() {
       href={EXPLORER_URL}
       target="_blank"
       rel="noreferrer"
-      aria-label="Powered by Avalanche — open the testnet explorer"
+      aria-label="Powered by Avalanche. Opens the testnet explorer"
     >
       <span className="avax-mark__label" aria-hidden="true">
         <span className="l-rest">Private L1 on Avalanche</span>

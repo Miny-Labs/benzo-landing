@@ -197,7 +197,7 @@ export default function HeroDoors() {
     <>
       <div ref={rootRef} id="hero-ctas" className="doors" onMouseLeave={leave}>
         <div className="doors-card">
-          <a className="tri tri-p" href={WALLET_URL} onMouseEnter={enter("personal")} aria-label="Personal — open the wallet">
+          <a className="tri tri-p" href={WALLET_URL} onMouseEnter={enter("personal")} aria-label="Personal: open the wallet">
             <span className="t-label">
               <span className="t-word display">Personal</span>
               <span className="t-sub">The wallet ↗</span>
@@ -231,7 +231,7 @@ export default function HeroDoors() {
               <span className="meta tnum">@you · 12/29</span>
             </span>
           </a>
-          <a className="tri tri-b" href={CONSOLE_URL} onMouseEnter={enter("business")} aria-label="Business — open the console">
+          <a className="tri tri-b" href={CONSOLE_URL} onMouseEnter={enter("business")} aria-label="Business: open the console">
             <span className="t-label">
               <span className="t-word display">Business</span>
               <span className="t-sub">The console ↗</span>
@@ -270,9 +270,7 @@ export default function HeroDoors() {
         {content.points.map((p) => (
           <div className="dp-clip" key={p}>
             <p className="dp-row">
-              <span className="dp-dash" aria-hidden="true">
-                —
-              </span>
+              <span className="dp-dash" aria-hidden="true" />
               {p}
             </p>
           </div>
