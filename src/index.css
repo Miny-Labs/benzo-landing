@@ -1163,12 +1163,12 @@ body {
   left: 50%;
   transform: translateX(-50%);
   white-space: nowrap;
-  font-size: 11px;
-  letter-spacing: 0.18em;
+  font-size: 12px;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
-  font-weight: 700;
+  font-weight: 800;
   color: var(--ink);
-  opacity: 0.4;
+  opacity: 0.85;
   transition: opacity 0.3s ease;
   pointer-events: none;
 }
