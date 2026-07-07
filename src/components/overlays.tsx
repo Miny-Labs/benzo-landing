@@ -138,7 +138,7 @@ export function HeroBlock() {
       </div>
       <p id="hero-sub" className="sub">
         Send, request, and receive money without putting your balance, income, or payment history on
-        display. Benzo gives every payment a private receipt you can prove when needed.
+        display. Privacy, on chain.
       </p>
       <HeroDoors />
     </motion.div>

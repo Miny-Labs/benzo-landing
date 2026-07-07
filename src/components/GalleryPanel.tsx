@@ -46,17 +46,17 @@ const STEPS = [
   {
     num: "01",
     verb: "Shield it.",
-    sub: "Move public USDC into a private note only you can spend. On-chain, your balance stops being anyone's business.",
+    sub: "Deposit public USDC and it becomes an encrypted balance only your key can open. On-chain, what you hold stops being anyone's business.",
   },
   {
     num: "02",
     verb: "Send it quietly.",
-    sub: "Pay @handles like you'd text a friend. Payroll and invoices work the same way, and the amounts stay between you.",
+    sub: "Pay an @handle like you'd text a friend — payroll and invoices too. The amount stays between the two of you.",
   },
   {
     num: "03",
     verb: "Prove what you choose.",
-    sub: "Need to show an auditor one number? A zero-knowledge proof shows them that number. The rest stays sealed.",
+    sub: "Show someone a single payment or balance — a proof reveals just that number. Everything else stays sealed.",
   },
 ];
 

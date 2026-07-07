@@ -46,6 +46,10 @@ const SiteFooter = forwardRef<HTMLDivElement>(function SiteFooter(_p, ref) {
           </motion.nav>
         </div>
 
+        <motion.p className="site-footer__tech" {...reveal(0.1)}>
+          Built on Avalanche · Encrypted ERC · Zero-knowledge proofs
+        </motion.p>
+
         <motion.div className="site-footer__brand-row" {...reveal(0.15)}>
           <a className="site-footer__brand" href="/" aria-label="Benzo home">
             <span className="site-footer__mark" aria-hidden="true">
