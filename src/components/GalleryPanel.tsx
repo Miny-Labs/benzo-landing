@@ -52,9 +52,10 @@ const DIGIT_PATHS: Record<string, string[]> = {
 };
 
 function Ghost({ num }: { num: string }) {
+  const digits = num.replace(/^0+/, "").split(""); // "01" reads as just "1" back there
   return (
-    <svg className="ghost" viewBox="0 0 220 140" aria-hidden="true">
-      {num.split("").map((d, i) =>
+    <svg className="ghost" viewBox={`0 0 ${digits.length * 120 - 20} 140`} aria-hidden="true">
+      {digits.map((d, i) =>
         (DIGIT_PATHS[d] ?? []).map((p, j) => <path key={`${i}-${j}`} d={p} transform={`translate(${i * 120} 0)`} />),
       )}
     </svg>
