@@ -3,7 +3,7 @@ export const WALLET_URL = import.meta.env.VITE_WALLET_URL ?? "/construction?door
 export const CONSOLE_URL = import.meta.env.VITE_CONSOLE_URL ?? "/construction?door=console";
 
 export const SOCIALS = {
-  x: "https://x.com/akshmnd",
+  x: "https://x.com/b3nz0X",
   github: "https://github.com/Miny-Labs",
   linkedin: "https://www.linkedin.com/in/hitakshiaroraa/",
 };
