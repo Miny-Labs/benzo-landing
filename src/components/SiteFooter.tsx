@@ -29,7 +29,7 @@ const SiteFooter = forwardRef<HTMLDivElement>(function SiteFooter(_p, ref) {
               Console <span className="fcta-arrow">↗</span>
             </a>
             <a href={EXPLORER_URL} target="_blank" rel="noreferrer">
-              Testnet explorer <span className="fcta-arrow">↗</span>
+              BenzoNet Explorer <span className="fcta-arrow">↗</span>
             </a>
           </motion.nav>
 
