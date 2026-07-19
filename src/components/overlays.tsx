@@ -134,7 +134,12 @@ export function HeroBlock() {
   return (
     <motion.div id="hero-block" className="headline" {...fade(0.3)}>
       <div className="title-box">
-        <span className="line display">{HEADLINE}</span>
+        {/* one sentence per line: "Private like cash." / "Fast like crypto." */}
+        {HEADLINE.split(/(?<=\.)\s+/).map((line) => (
+          <span className="line display" key={line}>
+            {line}
+          </span>
+        ))}
       </div>
       <p id="hero-sub" className="sub">
         Send, request, and receive money without putting your balance, income, or payment history on
